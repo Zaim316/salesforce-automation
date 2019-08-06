@@ -3,6 +3,7 @@ package com.salesforcetest.pages.salesforce.uatg;
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
+import java.util.Calendar;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -28,7 +29,7 @@ import com.salesforcetest.shared.Utils;
 public class RefreshExistingUserRecordAction {
 	public static WebDriver driver;
 	private WebElement element;
-	public static String newSINo;
+	public static String newSINo, emailLink, subjectLine;
 	private By ele;
 	
 	public RefreshExistingUserRecordAction(WebDriver driver) {
@@ -364,6 +365,16 @@ public class RefreshExistingUserRecordAction {
 		//driver.switchTo().defaultContent();
 		Utils.sleep(2);
 	}
+	public void setformNumberAndFormType(String formNumber, String formType) {
+		//WebDriverWait wait = new WebDriverWait (driver, 15);
+		//wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(driver.findElement(By.xpath("//div[@id='navigatortab']/div[3]/descendant::div[contains(@class,'sd_primary_container x-border-layout-ct')][3]/descendant::iframe[1]"))));
+		element = driver.findElement(By.xpath("//*[contains(text(),'How Can We Help You')]"));
+		scrollingFunction();
+		selectDropdownListValue(formNumber, driver.findElement(By.xpath("//div[@class='pbSubsection'][2]/table[@class='detailList']/tbody/tr[1]/td[4]/div/span/select")));
+		selectDropdownListValue(formType, driver.findElement(By.xpath("//div[@class='pbSubsection'][2]/table[@class='detailList']/tbody/tr[2]/td[4]/div/span/span/select")));
+		//driver.switchTo().defaultContent();
+		Utils.sleep(2);
+	}
 	public void setRandomCategoryAndKind() {
 		//WebDriverWait wait = new WebDriverWait (driver, 15);
 		//wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(driver.findElement(By.xpath("//div[@id='navigatortab']/div[3]/descendant::div[contains(@class,'sd_primary_container x-border-layout-ct')][3]/descendant::iframe[1]"))));
@@ -412,6 +423,13 @@ public class RefreshExistingUserRecordAction {
 		Utils.sleep(1);
 		robot.keyRelease(KeyEvent.VK_TAB);
 		Utils.sleep(2);
+		//driver.switchTo().defaultContent();
+	}
+	public void setResponseComments(String text) throws AWTException { //String receivedDate
+		//String receivedDate = "10/4/2018 9:43 AM";
+		//WebDriverWait wait = new WebDriverWait (driver, 15);
+		//wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(driver.findElement(By.xpath("//div[@id='navigatortab']/div[3]/descendant::div[contains(@class,'sd_primary_container x-border-layout-ct')][3]/descendant::iframe[1]"))));
+		driver.findElement(By.xpath("//div[@class='pbSubsection'][4]/table[@class='detailList']/tbody/tr[5]/td[4]/textarea")).sendKeys(text);
 		//driver.switchTo().defaultContent();
 	}
 	public void clickOnSaveSI() {
@@ -788,7 +806,375 @@ public class RefreshExistingUserRecordAction {
 		Utils.sleep(4);
 		driver.switchTo().defaultContent();
 	}
-	/*public static void main(String[] args) throws AWTException {
+	//Second Scenario Start
+	public void setPercentage(String percentageValue) throws AWTException { //String applicationRecord
+		//clear all tab code
+		driver.findElement(By.xpath("//div[@id='navigatortab']/div[2]/div[@class='x-tab-tabmenu-right']")).click();
+		Utils.sleep(2);
+		driver.findElement(By.xpath("//a/span[text()='Close all primary tabs']")).click();
+		Utils.sleep(4);
+		//************
+		//newSINo = "02734526";
+		WebDriverWait wait = new WebDriverWait (driver, 14);
+		ele = By.xpath("//div[@id='navigatortab']/descendant::table/tbody/tr[2]/td[2]/*");
+		fluentWaitForElementVisibility();
+		driver.findElement(By.xpath("//div[@id='navigatortab']/descendant::table/tbody/tr[2]/td[2]/*[@class='x-btn-split']/button")).click();
+		Utils.sleep(2);
+		Actions actObj = new Actions(driver);
+		actObj.moveToElement(driver.findElement(By.xpath("//*[@class='x-btn-split']"))).moveByOffset(124, 0).click().build().perform();
+		Utils.sleep(2);
+		driver.findElement(By.xpath("//div[@id='navigator-sbmenu']/descendant::span[text()='Quality Control Percentage']")).click();
+		Utils.sleep(4);
+		wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(driver.findElement(By.xpath("//div[@id='navigatortab']/div[3]/descendant::iframe[not(starts-with(@src,'https://uscis--uatg.my.salesforce.com'))]"))));
+		ele = By.xpath(".//input[@title='QC Percentage for HD ISO VSC']");
+		fluentWaitForElementVisibility();
+		Utils.sleep(2);
+		driver.findElement(By.xpath(".//table[@title='ISO Users']/tbody/tr[2]/td[1]/input[@type='checkbox']")).click();
+		Utils.sleep(1);
+		driver.findElement(ele).clear();
+		driver.findElement(ele).sendKeys(percentageValue);
+		Utils.sleep(1);
+		driver.findElement(By.xpath(".//div[contains(@class,'pbBottomButtons')]/descendant::input[@value='Set QC Percentage']")).click();
+		Utils.sleep(2);
+		ele = By.xpath(".//*[contains(text(),'Successfully updated QC Percentage for ISOs')]");
+		fluentWaitForElementVisibility();
+		element = driver.findElement(By.xpath(".//*[contains(text(),'Successfully updated QC Percentage for ISOs')]"));
+		highlightElement();
+		driver.switchTo().defaultContent();
+	}
+	public void deleteExistingSI () {
+		//clear all tab code
+		driver.findElement(By.xpath("//div[@id='navigatortab']/div[2]/div[@class='x-tab-tabmenu-right']")).click();
+		Utils.sleep(2);
+		driver.findElement(By.xpath("//a/span[text()='Close all primary tabs']")).click();
+		Utils.sleep(4);
+		//************
+		//newSINo = "02734526";
+		WebDriverWait wait = new WebDriverWait (driver, 14);
+		ele = By.xpath("//div[@id='navigatortab']/descendant::table/tbody/tr[2]/td[2]/*");
+		fluentWaitForElementVisibility();
+		driver.findElement(By.xpath("//div[@id='navigatortab']/descendant::table/tbody/tr[2]/td[2]/*[@class='x-btn-split']/button")).click();
+		Utils.sleep(2);
+		Actions actObj = new Actions(driver);
+		actObj.moveToElement(driver.findElement(By.xpath("//*[@class='x-btn-split']"))).moveByOffset(124, 0).click().build().perform();
+		Utils.sleep(2);
+		driver.findElement(By.xpath("//div[@id='navigator-sbmenu']/descendant::span[text()='Service Items']")).click();
+		Utils.sleep(4);
+		wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(driver.findElement(By.xpath("//div[@id='navigatortab']/div[3]/descendant::iframe[not(starts-with(@src,'https://uscis--uatg.my.salesforce.com'))]"))));
+		//selectDropdownListValue("My Open Service Items", driver.findElement(By.xpath("//img[@title='Service Item']/following::select[@title='View:']")));
+		driver.findElement(By.xpath("//select[contains(@id,'listSelect')]")).click();
+		Utils.sleep(2);
+		element = driver.findElement(By.xpath("//select[contains(@id,'listSelect')]/option[text()='HD Hotline Follow-up I-360']/preceding::option[1]"));
+		scrollingFunction();
+		driver.findElement(By.xpath("//select[contains(@id,'listSelect')]/option[text()='HD Hotline Follow-up I-360']")).click();
+		//driver.findElement(By.xpath("//select[contains(@id,'listSelect')]/option[text()='HD All Open Service Items']")).click();
+		Utils.sleep(2);
+		driver.findElement(By.xpath("//div[@title='Subject']")).click();
+		Utils.sleep(1);
+		try {
+			driver.findElement(By.xpath(".//input[@id='allBox']")).click();
+			driver.findElement(By.xpath("//a[text()='Delete']")).click();
+			Utils.sleep(2);
+			wait.until(ExpectedConditions.alertIsPresent());
+			driver.switchTo().alert().accept();
+			Utils.sleep(2);
+			/*Robot robot = new Robot();
+			Utils.sleep(2);
+			robot.keyPress(KeyEvent.VK_ENTER);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_ENTER);
+			Utils.sleep(2);*/
+		} catch (Exception e) {
+			
+		}
+		driver.switchTo().defaultContent();
+	}
+	public void fetchEmailLink () {
+		driver.findElement(By.id("setupLink")).click();
+		ele = By.xpath(".//input[@id='setupSearch']");
+		fluentWaitForElementVisibility();
+		driver.findElement(ele).sendKeys("email services");
+		Utils.sleep(2);
+		driver.findElement(By.xpath(".//a[text()='Email Services']")).click();
+		element = driver.findElement(By.xpath("//a[contains(text(),'Email Service Name')]"));
+		scrollingFunction();
+		element = driver.findElement(By.xpath("//table[@class='list']/tbody/tr[2]/td[2]/a[text()='EmailRelayRoutingHandler']"));
+		highlightElement();
+		element.click();
+		ele = By.xpath("//*[text()='Email Service: EmailRelayRoutingHandler']");
+		fluentWaitForElementVisibility();
+		element = driver.findElement(By.xpath(".//*[text()='Email Addresses']"));
+		scrollingFunction();
+		element = driver.findElement(By.xpath("//table[@class='list']/tbody/tr[1]/td[3]/a"));
+		highlightElement();
+		emailLink = element.getText();
+		System.out.println("Fetch email link :"+emailLink);
+	}
+	public String randomDateTime() {
+	      Calendar cal = Calendar.getInstance();
+	      int year = cal.get(Calendar.YEAR);
+	      int month = cal.get(Calendar.MONTH);
+	      int day = cal.get(Calendar.DAY_OF_MONTH);
+	      int hour = cal.get(Calendar.HOUR_OF_DAY);
+	      int minute = cal.get(Calendar.MINUTE);
+	      int second = cal.get(Calendar.SECOND);
+	      String randomDateTime = String.valueOf(year) + String.valueOf(month) + String.valueOf(day)
+	      + String.valueOf(hour) + String.valueOf(minute) + String.valueOf(second);
+	      //System.out.printf("Now random "+randomDateTime);
+	      subjectLine = "UATG Automation Test SI - " + randomDateTime;
+	      return randomDateTime;
+	}
+	public void logIntoGmail (String url, String username, String passowrd) throws AWTException {
+		Robot robot = new Robot();
+		driver.get(url);
+		driver.findElement(By.id("sign_in_username")).sendKeys(username);
+		driver.findElement(By.id("sign_in_password")).sendKeys(passowrd);
+		driver.findElement(By.xpath("//input[@value='Log In']")).click();
+		try {
+			WebDriverWait wait = new WebDriverWait (driver, 5);
+			ele = By.xpath("//div[text()='zabid@acumensolutions.com']");
+			wait.until(ExpectedConditions.visibilityOfElementLocated(ele));
+			driver.findElement(By.xpath("//span[text()='Continue']")).click();
+		} catch (Exception e) {
+			
+		}
+		ele = By.xpath("//div[text()='Compose']");
+		fluentWaitForElementVisibility();
+		driver.findElement(ele).click();
+		ele = By.xpath("//textarea[@name='to']");
+		fluentWaitForElementVisibility();
+		driver.findElement(ele).click();
+		driver.findElement(ele).sendKeys(emailLink);
+		robot.keyPress(KeyEvent.VK_TAB);
+		Utils.sleep(1);
+		robot.keyRelease(KeyEvent.VK_TAB);
+		Utils.sleep(1);
+		randomDateTime();
+		//driver.findElement(By.xpath("//input[@name='subjectbox']")).click();
+		driver.findElement(By.xpath("//input[@name='subjectbox']")).sendKeys(subjectLine);
+		robot.keyPress(KeyEvent.VK_TAB);
+		Utils.sleep(1);
+		robot.keyRelease(KeyEvent.VK_TAB);
+		Utils.sleep(1);
+		driver.findElement(By.xpath("//div[contains(@class,'Am Al editable')]")).click();
+		driver.findElement(By.xpath("//div[contains(@class,'Am Al editable')]")).sendKeys(subjectLine);
+		driver.findElement(By.xpath("//div[text()='Send']")).click();
+		Utils.sleep(8);
+		driver.close();
+		driver.quit();
+	}
+	public void hotLineDropDown () {
+		//clear all tab code
+				driver.findElement(By.xpath("//div[@id='navigatortab']/div[2]/div[@class='x-tab-tabmenu-right']")).click();
+				Utils.sleep(2);
+				driver.findElement(By.xpath("//a/span[text()='Close all primary tabs']")).click();
+				Utils.sleep(4);
+				//************
+				//newSINo = "02734526";
+				WebDriverWait wait = new WebDriverWait (driver, 14);
+				ele = By.xpath("//div[@id='navigatortab']/descendant::table/tbody/tr[2]/td[2]/*");
+				fluentWaitForElementVisibility();
+				driver.findElement(By.xpath("//div[@id='navigatortab']/descendant::table/tbody/tr[2]/td[2]/*[@class='x-btn-split']/button")).click();
+				Utils.sleep(2);
+				Actions actObj = new Actions(driver);
+				actObj.moveToElement(driver.findElement(By.xpath("//*[@class='x-btn-split']"))).moveByOffset(124, 0).click().build().perform();
+				Utils.sleep(2);
+				driver.findElement(By.xpath("//div[@id='navigator-sbmenu']/descendant::span[text()='Service Items']")).click();
+				Utils.sleep(4);
+				wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(driver.findElement(By.xpath("//div[@id='navigatortab']/div[3]/descendant::iframe[not(starts-with(@src,'https://uscis--uatg.my.salesforce.com'))]"))));
+				driver.findElement(By.xpath("//select[contains(@id,'listSelect')]")).click();
+				Utils.sleep(2);
+				element = driver.findElement(By.xpath("//select[contains(@id,'listSelect')]/option[text()='HD Hotline Follow-up I-360']/preceding::option[1]"));
+				scrollingFunction();
+				driver.findElement(By.xpath("//select[contains(@id,'listSelect')]/option[text()='HD Hotline Follow-up I-360']")).click();
+				//driver.findElement(By.xpath("//select[contains(@id,'listSelect')]/option[text()='HD All Open Service Items']")).click();
+				Utils.sleep(2);
+				driver.findElement(By.xpath("//div[@title='Subject']")).click();
+				Utils.sleep(1);
+				element = driver.findElement(By.xpath(".//span[text()='"+subjectLine+"']"));
+				highlightElement();
+				element = driver.findElement(By.xpath(".//span[text()='"+subjectLine+"']/parent::a/parent::div/parent::td/preceding-sibling::td[2]/div/a"));
+				highlightElement();
+				newSINo = driver.findElement(By.xpath(".//span[text()='"+subjectLine+"']/parent::a/parent::div/parent::td/preceding-sibling::td[2]/div/a")).getText(); //// need to chang
+				Utils.sleep(4);
+				driver.switchTo().defaultContent();
+	}
+	public void duplicateSIandOpenSI () throws AWTException {
+		Utils.sleep(1);
+		driver.findElement(By.xpath("//div[@id='navigatortab']/div[2]/div[@class='x-tab-tabmenu-right']")).click();
+		Utils.sleep(1);
+		driver.findElement(By.xpath("//a/span[text()='Close all primary tabs']")).click();
+		Utils.sleep(4);
+		String dontSave = "Don't Save";
+		driver.findElement(By.xpath("//button[text()='Don't Save']")).click();
+		WebDriverWait wait = new WebDriverWait (driver, 14);
+		ele = By.xpath("//div[@id='navigatortab']/descendant::table/tbody/tr[2]/td[2]/*");
+		fluentWaitForElementVisibility();
+		driver.findElement(By.xpath("//div[@id='navigatortab']/descendant::table/tbody/tr[2]/td[2]/*[@class='x-btn-split']/button")).click();
+		Utils.sleep(2);
+		Actions actObj = new Actions(driver);
+		actObj.moveToElement(driver.findElement(By.xpath("//*[@class='x-btn-split']"))).moveByOffset(124, 0).click().build().perform();
+		Utils.sleep(2);
+		driver.findElement(By.xpath("//div[@id='navigator-sbmenu']/descendant::span[text()='Service Items']")).click();
+		Utils.sleep(4);
+		wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(driver.findElement(By.xpath("//div[@id='navigatortab']/div[3]/descendant::iframe[not(starts-with(@src,'https://uscis--uatg.my.salesforce.com'))]"))));
+		driver.findElement(By.xpath("//select[contains(@id,'listSelect')]")).click();
+		Utils.sleep(2);
+		element = driver.findElement(By.xpath("//select[contains(@id,'listSelect')]/option[text()='My Open Service Items']/preceding::option[1]"));
+		scrollingFunction();
+		driver.findElement(By.xpath("//select[contains(@id,'listSelect')]/option[text()='My Open Service Items']")).click();
+		//driver.findElement(By.xpath("//select[contains(@id,'listSelect')]/option[text()='HD All Open Service Items']")).click();
+		Utils.sleep(2);
+		/*driver.findElement(By.xpath("//div[@title='Subject']")).click();
+		Utils.sleep(1);
+		Robot robot = new Robot();
+		try {
+			driver.findElement(By.xpath(".//input[@id='allBox']")).click();
+			driver.findElement(By.xpath(".//input[@value='Mark as Duplicate']")).click();
+			Utils.sleep(2);
+			wait.until(ExpectedConditions.alertIsPresent());
+			driver.switchTo().alert().accept();
+			Utils.sleep(2);
+			wait.until(ExpectedConditions.alertIsPresent());
+			Utils.sleep(2);
+			robot.keyPress(KeyEvent.VK_ENTER);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_ENTER);
+			Utils.sleep(2);
+		} catch (Exception e) {
+			
+		}
+		driver.findElement(By.xpath(".//input[@title='Refresh']")).click();
+		Utils.sleep(3);
+		driver.findElement(By.xpath("//input[@value='Assign a Service Item']")).click();
+		wait.until(ExpectedConditions.alertIsPresent());
+		Utils.sleep(1);
+		robot.keyPress(KeyEvent.VK_ENTER);
+		Utils.sleep(1);
+		robot.keyRelease(KeyEvent.VK_ENTER);
+		Utils.sleep(2);*/
+		driver.findElement(By.xpath("//table[@class='x-grid3-row-table']/tbody/tr[1]/td[4]/div/a")).click();
+		Utils.sleep(2);
+		driver.switchTo().defaultContent();
+	}
+	public void editSIandSave () {
+		fetchCorrectIframe(By.xpath("//a[@title='Details']/span/span[1]"));
+		driver.findElement(By.xpath("//a[@title='Details']/span/span[1]")).click();
+		Utils.sleep(1);
+		driver.findElement(By.xpath(".//*[@id='topButtonRow']/input[3]")).click();
+		Utils.sleep(2);
+		driver.switchTo().defaultContent();
+	}
+	public void setReceiptNumberAndContactName (String receiptNo, String contactNm) throws AWTException {
+		WebDriverWait wait = new WebDriverWait (driver, 8);
+		fetchCorrectIframe(By.xpath("//div[@class='pbSubsection'][1]/table[@class='detailList']/tbody/tr[3]/td[2]/input"));
+		driver.findElement(By.xpath("//div[@class='pbSubsection'][1]/table[@class='detailList']/tbody/tr[1]/td[2]/span/input")).sendKeys(receiptNo);
+		driver.findElement(By.xpath("//div[@class='pbSubsection'][1]/table[@class='detailList']/tbody/tr[1]/td[4]/div[@class='requiredInput']/span/a/img")).click();
+		Utils.sleep(2);
+		System.out.println("Window Count :: "+driver.getWindowHandles().size());
+		String winHandleBefore = driver.getWindowHandle();
+		for(String winHandle : driver.getWindowHandles()){
+			System.out.println(winHandle);
+			if (!winHandleBefore.equals(winHandle)) {
+		    driver.switchTo().window(winHandle);
+			}
+		}
+		wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(driver.findElement(By.xpath("//frame[@id='resultsFrame']"))));
+		driver.findElement(By.xpath(".//*[@id='Contact_body']/table/tbody/tr[2]/th/a[text()='"+contactNm+"']")).click();
+		Utils.sleep(2);
+		//driver.switchTo().defaultContent();
+		driver.switchTo().window(winHandleBefore);
+		//driver.findElement(By.xpath("//div[@class='pbSubsection'][1]/table[@class='detailList']/tbody/tr[1]/td[4]/div[@class='requiredInput']/span/input")).sendKeys(contactNm);
+		Robot robot = new Robot();
+		Utils.sleep(2);
+		robot.keyPress(KeyEvent.VK_ENTER);
+		Utils.sleep(1);
+		robot.keyRelease(KeyEvent.VK_ENTER);
+		Utils.sleep(2);
+		driver.switchTo().defaultContent();
+	}
+	public void validateEditedItemDetailsSaved() {
+		fetchCorrectIframe(By.xpath("//a[@title='Details']/span/span[1]"));
+		driver.findElement(By.xpath("//a[@title='Details']/span/span[1]")).click();
+		Utils.sleep(1);
+		element = driver.findElement(By.xpath("//div[@class='pbSubsection'][2]/table[@class='detailList']/tbody/tr[2]/td[2]"));
+		highlightElement();
+		element = driver.findElement(By.xpath("//div[@class='pbSubsection'][2]/table[@class='detailList']/tbody/tr[1]/td[4]"));
+		highlightElement();
+		driver.switchTo().defaultContent();
+	}
+	//Below function is in progress
+	public void createEditedResponse() throws AWTException {
+		fetchCorrectIframe(By.xpath("//a[@title='Details']/span/span[1]"));
+		driver.findElement(By.xpath("//a[@title='Feed']/span/span[1]")).click();
+		Utils.sleep(1);
+		WebDriverWait wait = new WebDriverWait (driver, 30);
+		wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(driver.findElement(By.xpath("//div[@id='navigatortab']/div[3]/descendant::iframe[contains(@src,'RecordType')]"))));
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//span[text()='New Response']")));
+		driver.findElement(By.xpath("//span[text()='New Response']")).click();
+		Utils.sleep(2);
+		//driver.switchTo().defaultContent();
+		wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(driver.findElement(By.xpath(".//iframe[@title='ResponseBuilder']"))));
+		element = driver.findElement(By.xpath(".//span[text()='Select Folder']"));
+		scrollingFunction();
+		element = driver.findElement(By.xpath(".//option[contains(text(),'01. Humanitarian Division Greetings')]"));
+		scrollingFunction();
+		element.click();
+		Utils.sleep(1);
+		driver.findElement(By.xpath(".//option[contains(text(),'HD Good Day')]")).click();
+		driver.findElement(By.xpath("//button[@title='Select to move the template to the selected box. Information about the template will appear below.']")).click();
+		//Select 2nd one
+		element = driver.findElement(By.xpath(".//option[contains(text(),'02. HD Document Requests')]"));
+		//scrollingFunction();
+		/*element.click();
+		element.click();*/
+		//((JavascriptExecutor)driver).executeScript("arguments[0].click();", element);
+		Actions actObj = new Actions(driver);
+		actObj.moveToElement(driver.findElement(By.xpath(".//option[contains(text(),'02. HD Document Requests')]"))).doubleClick().build().perform();
+		/*element = driver.findElement(By.xpath(".//option[contains(text(),'02. HD Document Requests')]/parent::select"));
+		selectDropdownListValue("02. HD Document Requests", element);*/
+		Utils.sleep(1);
+		driver.findElement(By.xpath(".//option[contains(text(),'I-929 Sent to NVC')]")).click();
+		Utils.sleep(1);
+		driver.findElement(By.xpath("//button[@title='Select to move the template to the selected box. Information about the template will appear below.']")).click();
+		//Select 3rd one
+		element = driver.findElement(By.xpath(".//option[contains(text(),'02. SAVE Program')]"));
+		scrollingFunction();
+		Utils.sleep(2);
+		/*element.click();
+		element.click();*/
+		//selectDropdownListValue("03. Humanitarian Division Closings", element);
+		//((JavascriptExecutor)driver).executeScript("arguments[0].click();", element);
+		element = driver.findElement(By.xpath(".//option[contains(text(),'03. Humanitarian Division Closings')]"));
+		scrollingFunction();
+		actObj.moveToElement(element).doubleClick().build().perform();
+		Utils.sleep(1);
+		element = driver.findElement(By.xpath(".//option[contains(text(),'HD Closing')]"));
+		scrollingFunction();
+		Utils.sleep(1);
+		element.click();
+		driver.findElement(By.xpath("//button[@title='Select to move the template to the selected box. Information about the template will appear below.']")).click();
+		Utils.sleep(2);
+		element = driver.findElement(By.xpath("//button[contains(text(),'Generate Preview')]"));
+		scrollingFunction();
+		Utils.sleep(3);
+		element.click();
+		Utils.sleep(4);
+		driver.findElement(By.xpath("//button[contains(text(),'Submit')]")).click();
+		Utils.sleep(4);
+		Robot robot = new Robot();
+		Utils.sleep(2);
+		robot.keyPress(KeyEvent.VK_ENTER);
+		Utils.sleep(1);
+		robot.keyRelease(KeyEvent.VK_ENTER);
+		Utils.sleep(2);
+		ele = By.xpath("//div[contains(text(),'Your response has been successfully submitted and is now locked.')]");
+		fluentWaitForElementVisibility();
+		Utils.sleep(4);
+		driver.switchTo().defaultContent();
+		driver.switchTo().defaultContent();
+	}
+	public static void main(String[] args) throws AWTException {
 		// TODO Auto-generated method stub
 		System.setProperty("webdriver.chrome.driver", "driver//chromedriver.exe");
 		//ChromeOptions options = new ChromeOptions();
@@ -799,25 +1185,42 @@ public class RefreshExistingUserRecordAction {
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 		new SalesforceLogin(driver).login(Constants.salesforce_url_uatg, Constants.salesforce_username_uatg, Constants.salesforce_password_uatg);
 		RefreshExistingUserRecordAction ref = new RefreshExistingUserRecordAction(driver);
-		ref.verifyProfile();
+		/*ref.verifyProfile();
+		//ref.deleteExistingSI();
+		ref.fetchEmailLink();
+		ref.logIntoGmail("https://acumensolutions-com.clearlogin.com/login", "zabid", "Mohammad1988");
+		ref.launch();
+		ref.searchHDISOVSCitems("One HD Supervisor");
+		ref.logInAsInternalUser("One HD Supervisor");
+		ref.setPercentage("5");
+		ref.hotLineDropDown();
+		ref.currentUserLogOut();*/
 		ref.searchHDISOVSCitems("HD ISO VSC");
+		ref.logInAsInternalUser("HD ISO VSC");
+		ref.duplicateSIandOpenSI();
+		ref.editSIandSave();
+		ref.setReceiptNumberAndContactName("WAC1690258857", "EDVARD EDOUARD");
+		/*ref.searchHDISOVSCitems("HD ISO VSC");
 		ref.logInAsInternalUser("HD ISO VSC");
 		ref.customerSearch("A200453283");
 		ref.customerRefresh();
 		ref.clickOnRecordItemFromOwnerPage("WAC1690258857");
 		//ref.searchForApplicationRecordWithAppNo("A200453283");
 		//ref.openApplicationRecordFromGlobalSearchResultPanel("WAC1690258857");
-		ref.createNewServiceItemParam("WAC1690258857");
+		ref.createNewServiceItemParam("WAC1690258857");*/
 		ref.setOrgName("Test Organi");
-		ref.setEmail("zabid@acumensolutions.com");
+		//ref.setEmail("zabid@acumensolutions.com");
 		ref.selectSenderType("ASC");
-		ref.setRandomSubjectAndDesAndFormType();
-		ref.setRandomCategoryAndKind();
+		ref.setformNumberAndFormType("I192", "I-192 Advance Permission to Enter as Nonimmigrant");
+		//ref.setRandomSubjectAndDesAndFormType();
+		ref.setParamCategoryAndKind("AWA Case", "AWA Concerns Identified", "New Comments");
 		ref.selectSIOrigin("Email");
-		ref.selectInitialQueue("VAWA_UPFD");
-		ref.setReceivedDate("10/4/2018 9:43 AM");
+		ref.selectInitialQueue("VAWA_HotlineFollowupI360");
+		//ref.setReceivedDate("10/4/2018 9:43 AM");
+		ref.setResponseComments("New Responses");
 		ref.clickOnSaveSI();
-		ref.fetchServiceItemNo();
+		//
+		/*ref.fetchServiceItemNo();
 		ref.createNewResponse();
 		ref.verifyNewResponseStatus();
 		ref.currentUserLogOut();
@@ -832,13 +1235,15 @@ public class RefreshExistingUserRecordAction {
 		ref.logInAsInternalUser("HD ISO VSC");
 		ref.searchWithStoredItem();
 		ref.editRejectedSI();
-		ref.currentUserLogOut();
-		ref.searchHDISOVSCitems("One HD Supervisor");
+		ref.currentUserLogOut();*/
+		/*ref.searchHDISOVSCitems("One HD Supervisor");
 		ref.logInAsInternalUser("One HD Supervisor");
-		ref.selectRequiredDropdownlist();
+		ref.setPercentage("5");
+		ref.currentUserLogOut();*/
+		/*ref.selectRequiredDropdownlist();
 		ref.approveServiceRqst();
-		ref.validateApprovedResponse();
+		ref.validateApprovedResponse();*/
 		//driver.close();
 		//driver.quit();
-	}*/
+	}
 }

@@ -65,7 +65,9 @@ public class Constants {
 	
 	public static final String salesforce_username_uatg = "zabid_cis@acumensolutions.com.uatg";
 
-	public static final String salesforce_password_uatg = "acumentest6";
+	public static final String salesforce_password_uatg = "acumentest7";
+	
+	public static final String email_password = "Mohammad1988";
 
 	//Salesforce credentials
 	

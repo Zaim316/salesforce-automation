@@ -6,9 +6,9 @@ import cucumber.api.junit.Cucumber;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(//features = "src/test/java/features/uatg",
-		features = "src/test/java/features/nsrrf",
+		features = "src/test/java/features/eaaqc",
 	//glue = { "com.salesforcetest.mapper.uatg" },
-	glue = { "com.salesforcetest.mapper.srire2e" },
+	glue = { "com.salesforcetest.mapper.eaaqc" },
 	plugin = {"com.cucumber.listener.ExtentCucumberFormatter:test-report/report.html" },
 	tags = {"@Reg"},
 	strict = true,

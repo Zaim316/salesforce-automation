@@ -71,7 +71,21 @@ public class HD_ISO_VSC_New_Service_Response_Rejection_Flow {
 		}
 		//new SalesforceLogin(driver).login(Constants.salesforce_url_uatg, Constants.salesforce_username_uatg, Constants.salesforce_password_uatg);
 	}
-	
+	@Then("For rejection and approval of response scenario set QC Percentage to \"(.*)\"$")
+	public void Set_QC_Percentage(String val) {
+		//main.verifyLoggedInUserProfile();
+		try {
+			searchHDISOVSCitems("One HD Supervisor");
+			logInAsInternalUser("One HD Supervisor");
+			setPercentage(val);
+			currentUserLogOut();
+			testReporter.log(LogStatus.PASS, "Set percentage to "+val+" successful.");
+		} catch (Exception e) {
+			testReporter.log(LogStatus.FAIL, "Set percentage to "+val+" successful.");
+			Assert.assertTrue(false);
+			e.printStackTrace();
+		}
+	}
 	@Then("For rejection and approval of response scenario Verifying the current logged in user profile$")
 	public void verify_Logged_In_User_Profile() {
 		//main.verifyLoggedInUserProfile();
@@ -1292,6 +1306,41 @@ public class HD_ISO_VSC_New_Service_Response_Rejection_Flow {
 		ele = By.xpath("//div[contains(text(),'Your response has been successfully submitted and is now locked.')]");
 		fluentWaitForElementVisibility();
 		Utils.sleep(4);
+		driver.switchTo().defaultContent();
+	}
+	public void setPercentage(String percentageValue) throws AWTException { //String applicationRecord
+		//clear all tab code
+		driver.findElement(By.xpath("//div[@id='navigatortab']/div[2]/div[@class='x-tab-tabmenu-right']")).click();
+		Utils.sleep(2);
+		driver.findElement(By.xpath("//a/span[text()='Close all primary tabs']")).click();
+		Utils.sleep(4);
+		//************
+		//newSINo = "02734526";
+		WebDriverWait wait = new WebDriverWait (driver, 14);
+		ele = By.xpath("//div[@id='navigatortab']/descendant::table/tbody/tr[2]/td[2]/*");
+		fluentWaitForElementVisibility();
+		driver.findElement(By.xpath("//div[@id='navigatortab']/descendant::table/tbody/tr[2]/td[2]/*[@class='x-btn-split']/button")).click();
+		Utils.sleep(2);
+		Actions actObj = new Actions(driver);
+		actObj.moveToElement(driver.findElement(By.xpath("//*[@class='x-btn-split']"))).moveByOffset(124, 0).click().build().perform();
+		Utils.sleep(2);
+		driver.findElement(By.xpath("//div[@id='navigator-sbmenu']/descendant::span[text()='Quality Control Percentage']")).click();
+		Utils.sleep(4);
+		wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(driver.findElement(By.xpath("//div[@id='navigatortab']/div[3]/descendant::iframe[not(starts-with(@src,'https://uscis--uatg.my.salesforce.com'))]"))));
+		ele = By.xpath(".//input[@title='QC Percentage for HD ISO VSC']");
+		fluentWaitForElementVisibility();
+		Utils.sleep(2);
+		driver.findElement(By.xpath(".//table[@title='ISO Users']/tbody/tr[2]/td[1]/input[@type='checkbox']")).click();
+		Utils.sleep(1);
+		driver.findElement(ele).clear();
+		driver.findElement(ele).sendKeys(percentageValue);
+		Utils.sleep(1);
+		driver.findElement(By.xpath(".//div[contains(@class,'pbBottomButtons')]/descendant::input[@value='Set QC Percentage']")).click();
+		Utils.sleep(2);
+		ele = By.xpath(".//*[contains(text(),'Successfully updated QC Percentage for ISOs')]");
+		fluentWaitForElementVisibility();
+		element = driver.findElement(By.xpath(".//*[contains(text(),'Successfully updated QC Percentage for ISOs')]"));
+		highlightElement();
 		driver.switchTo().defaultContent();
 	}
 }
