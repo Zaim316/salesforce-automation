@@ -14,11 +14,14 @@ import org.testng.annotations.Test;
 
 import com.relevantcodes.extentreports.ExtentReports;
 import com.relevantcodes.extentreports.ExtentTest;
+import com.relevantcodes.extentreports.LogStatus;
 import com.salesforcetest.main.CaseTestMemberMain;
 import com.salesforcetest.main.MultiTypeServiceItemCreator;
 import com.salesforcetest.pages.salesforce.SalesforceLogin;
+import com.salesforcetest.pages.salesforce.uatg.GetScreenShot;
 import com.salesforcetest.shared.Constants;
 import com.salesforcetest.shared.ExtentReporter;
+import com.salesforcetest.shared.Utils;
 
 public class CaseTeamMemberTest {
 	private WebDriver driver;
@@ -48,29 +51,35 @@ public class CaseTeamMemberTest {
 	}
 	
 	@Test(testName = "Scenario_16_1", description = "Scenario 16.1", priority=1)
-	public void Add_Case_Team_Memeber() {
+	public void Add_Case_Team_Memeber() throws Exception {
 		SalesforceLogin sf = new SalesforceLogin(driver);
 		
-		sf.login(Constants.salesforce_username, Constants.salesforce_password);
-		
+		//sf.login(Constants.salesforce_username, Constants.salesforce_password);
+		sf.login(Constants.salesforce_pstaff2_username_Admin, Constants.salesforce_pstaff2_password_Admin);
+		new SalesforceLogin(driver).internalUserLogin("Privacy Staff");
 		MultiTypeServiceItemCreator serviceItemCreator = new MultiTypeServiceItemCreator(driver);
 		serviceItemCreator.setTestReporter(testReporter);
 		
 		String contact = "Test Automation Internal Contact";
 		serviceItem = serviceItemCreator.create_pia_service_item_manually(contact);
 		
-		String teamMember = "Compliance Staff 1";
+		String teamMember = "Privacy Staff 2";
 		main.add_member_in_service_item(teamMember);
 		
 		sf.logout();
+		driver.close();
+		driver.quit();
 	}
 	
 	@Test(testName = "Scenario_16_2", description = "Scenario 16.2", priority=2)
 	public void View_Edit_SI_As_Case_Team_Memeber() {
+		init();
+		main.setTestReporter(testReporter);
 		SalesforceLogin sf = new SalesforceLogin(driver);
 		
-		sf.login(Constants.case_team_member_sf_username, Constants.case_team_member_sf_password);
-		
+		//sf.login(Constants.salesforce_pstaff2_username, Constants.salesforce_pstaff2_password);
+		sf.login(Constants.salesforce_pstaff2_username_Admin, Constants.salesforce_pstaff2_password_Admin);
+		new SalesforceLogin(driver).internalUserLogin("Privacy Staff 2");
 		main.view_edit_si_as_team_member(serviceItem);
 		
 		sf.logout();
@@ -78,7 +87,11 @@ public class CaseTeamMemberTest {
 	
 	@AfterMethod
 	public void getResult(ITestResult result) {
+		try {
 		extent.endTest(testReporter);
+		} catch (Exception e) {
+			
+		}
 	}
 
 	@AfterClass(alwaysRun = true)

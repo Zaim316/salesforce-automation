@@ -1,8 +1,10 @@
 Feature: Existing user record refresh and create a new service item with new response and approve with Supervisor user
   Verify if HD_ISO_VSC existing user record is getting refreshed and create new service item
 
+  @DirectApprovalHD
   Scenario: Refresh Existing User Account and create new service item
     Given Registered User is logged in with "zabid_cis@acumensolutions.com.uatg"
+    Then Set QC Percentage to "100"
     Then Verifying the current logged in user profile
     When Search for required Internal User "HD ISO VSC"
     Then Logging in as Internal user and verifying "HD ISO VSC"
@@ -23,14 +25,14 @@ Feature: Existing user record refresh and create a new service item with new res
     Then Verify New Service Item number and Details
     Then Create a new response for new Service Item
     Then Verify newly created service response status
+    Then Verify logging in as HD ISO VSC user can change the service item owner to queue VAWA_I918inquiriesNSC
     Then Logout from current profile
     When Search for required Supervisor User "One HD Supervisor"
     Then Logging in as Supervisor user and verifying "One HD Supervisor"
     Then Select required service item with Supervisor user to approve/reject
+    Then Verify logging in as ONE HD SUPERVISOR user can change the service item owner to queue VAWA_ISOA
     Then Approve the selected service request
     Then Validate approved request response
+    Then Validate the Error message while change the status as close and close the service Item after giving correct values
     Then Stop Report Generation for current scenario
-    Then Close the browser for current scenario  
-    
-    
-    
+    Then Close the browser for current scenario

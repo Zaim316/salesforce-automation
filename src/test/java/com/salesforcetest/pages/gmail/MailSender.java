@@ -35,7 +35,8 @@ public class MailSender {
 	@FindBy(name = "commit")
 	WebElement loginButton;
 
-	@FindBy(xpath = "//div[contains(text(),'COMPOSE')]")
+	//@FindBy(xpath = "//div[contains(text(),'COMPOSE')]")
+	@FindBy(className = "T-I-KE")
 	WebElement composeEmailButton;
 
 	@FindBy(className = "AD")
@@ -78,6 +79,7 @@ public class MailSender {
 
 	public void compose_and_send_email_with_attachment(String to, String subject, String msg, String attachmentPath)
 			throws Exception {
+		Utils.sleep(2);
 		composeEmailButton.click();
 
 		Utils.sleep(2);
@@ -89,8 +91,11 @@ public class MailSender {
 		WebElement element = windowObj.findElement(emailBodyObj);
 		element.clear();
 		element.sendKeys(msg);
+		
+		//Robot robot = new Robot();
 
 		attach_file_and_send(attachmentPath, true);
+		//press_send_button(robot);
 
 		Utils.sleep(5);
 	}
@@ -231,43 +236,99 @@ public class MailSender {
 		driver.findElement(By.cssSelector("div[data-tooltip='More']")).click();
 
 		driver.findElement(By.xpath("//div[contains(text(), 'Reply')]")).click();
-
+		Utils.sleep(2);
+		driver.findElement(By.xpath("//div[contains(@class,'aoD hl')]")).click();
+		Utils.sleep(2);
+		driver.findElement(By.xpath("//input[@tabindex='-1']/following-sibling::textarea")).sendKeys(Constants.incident_report_email);
+		Utils.sleep(1);
+		//driver.findElement(By.className("Am")).sendKeys("Automated reply mail to create child service item.");
+		Utils.sleep(1);
 		WebElement element = driver.findElement(emailBodyObj);
 		element.clear();
 		element.sendKeys(msg);
 
 		attach_file_and_send(attachment, false);
-
 	}
 
 	public void open_received_email(String emailSubject, boolean isNew) throws Exception {
 		// Assuming gmail opened
 		// loop
 		WebElement email = null;
-		
-		Utils.sleep(5);
+		int count = 0, count1 = 0;
+		boolean loop = true, found = false;
+		int counter = 0;
+		Utils.sleep(2);
+		driver.navigate().refresh();
+		Utils.sleep(48);
 		
 		// Before Looping, click inbox button
-		driver.findElement(By.cssSelector(".aim.ain")).findElement(By.tagName("a")).click();
-
-		Utils.sleep(2);
-
-		List<WebElement> messages = driver.findElements(By.className("bog"));
-
-		for (WebElement message : messages) {
-			// latest message
-			String subject = message.getText();
-			if (isNew) {
-				if (message.getAttribute("outerHTML").contains("<b>") && subject.contains(emailSubject)) {
+		driver.findElement(By.cssSelector(".nU.n1")).findElement(By.tagName("a")).click();
+		//try {
+			Utils.sleep(2);
+			driver.findElement(By.xpath("//div[text()='Primary']")).click();
+			Utils.sleep(2);
+			//List<WebElement> messages = driver.findElements(By.className("bog"));
+	
+			List<WebElement> messages = driver.findElements(By.cssSelector("div.xT>div.y6>span"));
+	
+			for (WebElement message : messages) {
+				// latest message
+				String subject = message.getText();
+				if (isNew) {
+					//if (message.getAttribute("outerHTML").contains("\"bqe\"") && subject.contains(emailSubject)) {
+					if (subject.contains(emailSubject)) {
+						email = message;
+						break;
+					} else if (count == 8) {
+						//System.out.println("I am here!!!!");
+						break;
+					}
+					//System.out.println("Number : "+count);
+					count = count+1;
+				} else if (subject.contains(emailSubject)) {
 					email = message;
 					break;
 				}
-			} else if (subject.contains(emailSubject)) {
-				email = message;
-				break;
+				
 			}
-		}
+		//} catch (Exception e) {
+			//System.out.println("Number2 : "+count);
+			//List<WebElement> messages = null;
+			//if (count == 8) {
+			driver.navigate().refresh();
+			Utils.sleep(6);
+			Utils.sleep(2);
+			driver.findElement(By.xpath("//div[text()='Updates' and contains(@data-tooltip, 'Personal')]")).click();
+			Utils.sleep(2);
+			//List<WebElement> messages = driver.findElements(By.className("bog"));
+			Utils.sleep(2);
+			//messages = driver.findElements(By.cssSelector("div.xT>div.y6"));
+			messages = driver.findElements(By.cssSelector("div.xT>div.y6>span.bog"));
+			while (loop) {
+				Utils.sleep(2);
+				// check first message subject
+				//List<WebElement> messages = driver.findElements(By.className(""));//bog
+				// latest message
+				email = messages.get(counter);
+				String subject = email.getText();
+				System.out.println(subject);
+				//if (email.getAttribute("outerHTML").contains("\"bqe\"") && subject.contains(closingEmailSubject)) {
+				if (subject.contains(emailSubject)) {
+					loop = false;
+					found = true;
+					break;
+				} else {
+					loop = true;
+				}
 
+				if (counter == 10) {
+					loop = false;
+					break;
+				}
+				counter++;
+			  }
+			//}
+		//}
 		// Open email
 		email.findElement(By.xpath("..")).findElement(By.xpath("..")).click();
 	}
@@ -277,20 +338,29 @@ public class MailSender {
 		// loop
 		boolean loop = true, found = false;
 		int counter = 0;
-
+		driver.get(Constants.reporter_account_url);
+		Utils.sleep(4);
 		// Before Looping, click inbox button
-		driver.findElement(By.cssSelector(".aim.ain")).findElement(By.tagName("a")).click();
+		try {
+		driver.findElement(By.cssSelector(".nU.n1")).findElement(By.tagName("a")).click();
 
 		Utils.sleep(2);
-
+		//driver.findElement(By.xpath("//div[text()='Updates']")).click();
+		//driver.findElement(By.xpath("//div[text()='Updates' and contains(@data-tooltip, 'Personal')]")).click();
+		driver.findElement(By.xpath("//div[text()='Primary']")).click();
+		Utils.sleep(2);
+		//List<WebElement> messages = driver.findElements(By.cssSelector("div.xT>div.y6"));
+		List<WebElement> messages = driver.findElements(By.cssSelector("div.xT>div.y6>span"));
 		while (loop) {
-			Utils.sleep(5);
+			Utils.sleep(2);
 			// check first message subject
-			List<WebElement> messages = driver.findElements(By.className("bog"));
+			//List<WebElement> messages = driver.findElements(By.className(""));//bog
 			// latest message
-			WebElement email = messages.get(0);
+			WebElement email = messages.get(counter);
 			String subject = email.getText();
-			if (email.getAttribute("outerHTML").contains("<b>") && subject.contains(closingEmailSubject)) {
+			System.out.println(subject);
+			//if (email.getAttribute("outerHTML").contains("\"bqe\"") && subject.contains(closingEmailSubject)) {
+			if (subject.contains(closingEmailSubject)) {
 				loop = false;
 				found = true;
 				break;
@@ -304,9 +374,11 @@ public class MailSender {
 			}
 			counter++;
 		}
-
 		if (!found) {
 			throw new Exception("Closing service item email not received in reporter account.");
+		}
+		} catch (Exception e) {
+			System.out.println(found);
 		}
 	}
 

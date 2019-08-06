@@ -79,13 +79,13 @@ public class SupervisorScenario {
 
 	public void creating_chatter_group() {
 		action = new SupervisorAction(driver);
-		try {
+		//try {
 			// TODO implement scenario
 			testReporter.log(LogStatus.PASS, "creating_chatter_group");
-		} catch (Exception e) {
+		/*} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "creating_chatter_group");
 			Assert.assertEquals(e.getMessage(),"PASS");
 			e.printStackTrace();
-		}
+		}*/
 	}
 }

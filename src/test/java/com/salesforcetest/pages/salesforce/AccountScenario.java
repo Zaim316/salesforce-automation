@@ -3,10 +3,13 @@ package com.salesforcetest.pages.salesforce;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.salesforcetest.shared.Constants;
 import com.salesforcetest.shared.Utils;
@@ -15,7 +18,8 @@ public class AccountScenario {
 
 	private WebDriver driver;
 
-	@FindBy(linkText = "Accounts")
+	//@FindBy(xpath = ".//*[@id='oneHeader']/descendant::*[@data-id='Account']")
+	@FindBy(xpath = "//a[@title='Accounts']/parent::*")
 	WebElement accountTab;
 	
 	@FindBy(linkText = "New")
@@ -29,13 +33,17 @@ public class AccountScenario {
 	public void create_internal_account() {
 		open_account_tab_and_click_new();
 		
+		((JavascriptExecutor) driver).executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", 
+				driver.findElement(By.xpath("//span[text()='USCIS Internal Account']")));
+		Utils.sleep(1);
 		//Clicking internal contact
 		select_radio_and_next(1);
 		
 		fill_account_form_and_save("Test Internal Account "+Constants.getRamdomId());
 	}
 	
-	public void create_internal_contact() {
+	public void create_internal_contact() throws InterruptedException {
+		Utils.scrollWindow(driver,280);
 		driver.findElements(By.className("forceRelatedListSingleContainer")).get(0).findElement(By.cssSelector("a[title='New']")).click();
 		
 		Utils.sleep(3);
@@ -51,13 +59,18 @@ public class AccountScenario {
 	public void create_external_account() {
 		open_account_tab_and_click_new();
 		
+		((JavascriptExecutor) driver).executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", 
+				driver.findElement(By.xpath("//span[text()='USCIS External Account']")));
+		Utils.sleep(1);
 		//select nothing . just press next
 		select_radio_and_next(0);
-		
 		fill_account_form_and_save("Test External Account "+Constants.getRamdomId());
 	}
 	
-	public void create_external_contact() {
+	public void create_external_contact() throws InterruptedException {
+		driver.navigate().refresh();
+		Utils.sleep(5);
+		Utils.scrollWindow(driver,180);
 		driver.findElements(By.className("forceRelatedListSingleContainer")).get(0).findElement(By.cssSelector("a[title='New']")).click();
 
 		Utils.sleep(3);
@@ -66,7 +79,7 @@ public class AccountScenario {
 		
 		Utils.sleep(3);
 		
-		fill_contact_form_and_save();
+		fill_contact_form_and_save2();
 	}
 	
 	/**
@@ -97,8 +110,9 @@ public class AccountScenario {
 		driver.findElement(By.id(accNameLabel.getAttribute("for"))).sendKeys(actionName);
 		
 		//Press save
-		List<WebElement> footerButtons = driver.findElement(By.className("modal-footer")).findElements(By.tagName("button"));
-		footerButtons.get(2).click();
+		//List<WebElement> footerButtons = driver.findElement(By.className("modal-footer")).findElements(By.tagName("button"));
+		List<WebElement> footerButtons = driver.findElements(By.xpath("//span[text()='Save']/parent::button"));
+		footerButtons.get(1).click();
 		
 		Utils.sleep(3);
 	}
@@ -109,14 +123,14 @@ public class AccountScenario {
 	private void fill_contact_form_and_save() {
 		
 		//Fill first name
-		WebElement firstNameLabel = driver.findElement(By.xpath("//label[.//span[text()='First Name']]"));
-		
-		driver.findElement(By.id(firstNameLabel.getAttribute("for"))).sendKeys("Zaim");
+//		WebElement firstNameLabel = driver.findElement(By.xpath("//label[.//span[text()='First Name']]"));
+//		
+//		driver.findElement(By.id(firstNameLabel.getAttribute("for"))).sendKeys("Test Automation");
 		
 		//Fill Last Name
 		WebElement lastNameLabel = driver.findElement(By.xpath("//label[.//span[text()='Last Name']]"));
 		
-		driver.findElement(By.id(lastNameLabel.getAttribute("for"))).sendKeys("Abid");
+		driver.findElement(By.id(lastNameLabel.getAttribute("for"))).sendKeys("Test Automation Internal Contact");
 		
 		//Fill Email
 		WebElement emailLabel = driver.findElement(By.xpath("//label[.//span[text()='Email']]"));
@@ -126,12 +140,47 @@ public class AccountScenario {
 		Utils.sleep(2);
 		
 		//Press save
-		List<WebElement> footerButtons = driver.findElement(By.className("modal-footer")).findElements(By.tagName("button"));
-		footerButtons.get(2).click();
+		//List<WebElement> footerButtons = driver.findElement(By.className("modal-footer")).findElements(By.tagName("button"));
+		List<WebElement> footerButtons = driver.findElements(By.xpath("//span[text()='Save']/parent::button"));
+		try {
+			footerButtons.get(2).click();
+			} catch (Exception e) {
+				footerButtons.get(1).click();	
+			}
 		
-		Utils.sleep(3);
+		Utils.sleep(4);
 	}
-	
+
+	private void fill_contact_form_and_save2() {
+		
+		//Fill first name
+//		WebElement firstNameLabel = driver.findElement(By.xpath("//label[.//span[text()='First Name']]"));
+//		
+//		driver.findElement(By.id(firstNameLabel.getAttribute("for"))).sendKeys("Test Automation");
+		
+		//Fill Last Name
+		WebElement lastNameLabel = driver.findElement(By.xpath("//label[.//span[text()='Last Name']]"));
+		
+		driver.findElement(By.id(lastNameLabel.getAttribute("for"))).sendKeys("Test Automation External Contact");
+		
+		//Fill Email
+		WebElement emailLabel = driver.findElement(By.xpath("//label[.//span[text()='Email']]"));
+		
+		driver.findElement(By.id(emailLabel.getAttribute("for"))).sendKeys("zabid"+Constants.getRamdomId()+"@acumensolutions.com");
+		
+		Utils.sleep(2);
+		
+		//Press save
+		//List<WebElement> footerButtons = driver.findElement(By.className("modal-footer")).findElements(By.tagName("button"));
+		List<WebElement> footerButtons = driver.findElements(By.xpath("//span[text()='Save']/parent::button"));
+		try {
+		footerButtons.get(1).click();
+		} catch (Exception e) {
+			driver.findElement(By.xpath("//button[@title='Save']")).click();
+		}
+		
+		Utils.sleep(4);
+	}
 	/**
 	 * common method
 	 * @param num
@@ -146,7 +195,8 @@ public class AccountScenario {
 		
 		WebElement footer = driver.findElement(By.className("forceChangeRecordTypeFooter"));
 		
-		footer.findElements(By.tagName("button")).get(1).click();
+		//footer.findElements(By.tagName("button")).get(1).click();
+		driver.findElement(By.xpath("//span[text()='Next']/parent::button")).click();
 		
 		Utils.sleep(2);
 	}

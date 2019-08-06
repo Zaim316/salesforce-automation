@@ -30,6 +30,7 @@ public class NewAccountScenarioTest {
 
 	private ExtentTest testReporter;
 
+	
 	@BeforeClass
 	public void init() {
 		System.setProperty("webdriver.chrome.driver", "driver//chromedriver.exe");
@@ -38,7 +39,9 @@ public class NewAccountScenarioTest {
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 		nas = new NewAccountScenario(driver);
 
-		new SalesforceLogin(driver).login(Constants.salesforce_username, Constants.salesforce_password);
+		//new SalesforceLogin(driver).login(Constants.salesforce_username, Constants.salesforce_password);
+		new SalesforceLogin(driver).login(Constants.salesforce_pstaff2_username_Admin, Constants.salesforce_pstaff2_password_Admin);
+		new SalesforceLogin(driver).internalUserLogin("Privacy Staff");
 	}
 
 	@BeforeMethod
@@ -46,17 +49,17 @@ public class NewAccountScenarioTest {
 		testReporter = extent.startTest(method.getName());
 		nas.setTestReporter(testReporter);
 	}
-	
+
 	@Test(testName = "Scenario_1_1", description = "Scenario 1.1 and 1.2", priority = 1)
-	public void test_create_internal_account() {
-		driver.get(Constants.salesforce_url);
+	public void test_create_internal_account() throws InterruptedException {
+		//driver.get(Constants.salesforce_url);
 
 		nas.create_internal_account_and_contact();
 	}
 
 	@Test(testName = "Scenario_1_3", description = "Scenario 1.3 and 1.4", priority = 2)
-	public void test_create_external_account() {
-		driver.get(Constants.salesforce_url);
+	public void test_create_external_account() throws InterruptedException {
+		//driver.get(Constants.salesforce_url);
 
 		nas.create_external_account_and_contact();
 	}

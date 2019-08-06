@@ -10,7 +10,7 @@
         <classes>
             <class name="com.salesforcetest.test.IncidentManagementScenarioTest"></class>
         </classes>
-    </test> 
+    </test>
     <test name="ComplianceManagementScenarioTest" group-by-instances="true">
         <classes>
             <class name="com.salesforcetest.test.ComplianceManagementScenarioTest"></class>

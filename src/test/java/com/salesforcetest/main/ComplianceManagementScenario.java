@@ -30,7 +30,7 @@ public class ComplianceManagementScenario extends CommonServiceItemTestScenario{
 		return serviceItemNumber;
 	}
 
-	public void send_report_email_from_gmail(Reporter reporter) {
+	public void send_report_email_from_gmail(Reporter reporter) throws Exception {
 		try {
 			
 			String subject = ((Compliance) reporter.getType()).getSubject();
@@ -49,7 +49,7 @@ public class ComplianceManagementScenario extends CommonServiceItemTestScenario{
 
 	}
 	
-	public void send_report_email_from_gmail(String email, String subject, String msg, String attachment) {
+	public void send_report_email_from_gmail(String email, String subject, String msg, String attachment) throws Exception {
 		try {
 			send_report_email_from_gmail(driver, email, subject,
 					msg, attachment);
@@ -63,7 +63,7 @@ public class ComplianceManagementScenario extends CommonServiceItemTestScenario{
 
 	}
 
-	public void select_and_assert_compliance_queue() {
+	public void select_and_assert_compliance_queue() throws Exception {
 		try {
 			ServiceItemsAction serviceAction = new ServiceItemsAction(driver, testReporter);
 
@@ -82,7 +82,7 @@ public class ComplianceManagementScenario extends CommonServiceItemTestScenario{
 		}
 	}
 
-	public void select_compliance_and_change_ownership() {
+	public void select_compliance_and_change_ownership() throws Exception {
 		try {
 			System.out.println(serviceItemNumber);
 			if (serviceItemNumber == null || serviceItemNumber.isEmpty())
@@ -103,7 +103,7 @@ public class ComplianceManagementScenario extends CommonServiceItemTestScenario{
 		}
 	}
 	
-	public void update_service_item_type() {
+	public void update_service_item_type() throws Exception {
 		try {
 			ServiceItemsAction serviceAction = new ServiceItemsAction(driver, testReporter);
 			
@@ -117,8 +117,8 @@ public class ComplianceManagementScenario extends CommonServiceItemTestScenario{
 		}
 	}
 
-	public void verify_status_change() {
-		try {
+	public void verify_status_change() throws Exception {
+		//try {
 			if (serviceItemNumber == null || serviceItemNumber.isEmpty())
 				throw new Exception("Service Item Number not generated");
 
@@ -129,20 +129,22 @@ public class ComplianceManagementScenario extends CommonServiceItemTestScenario{
 			serviceAction.verify_compliance_service_item_status_change(serviceItemNumber);
 			
 			testReporter.log(LogStatus.PASS, "verify_status_change_for_compliance");
-		} catch (Exception e) {
+		/*} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "verify_status_change_for_compliance");
 			Assert.assertEquals(e.getLocalizedMessage(), "Passed");
 			e.printStackTrace();
-		}
+		}*/
 	}
 
 	/**
 	 * send email from service item
 	 * 
 	 * @param reporter
+	 * @throws Exception 
 	 */
-	public void select_service_item_and_send_email(String toEmail, String attachment, String msg) {
+	public void select_service_item_and_send_email(String toEmail, String attachment, String msg) throws Exception {
 		try {
+			Constants.email_subject = Constants.compliance_subject;
 			if(!"".equals(msg)) {
 				select_service_item_and_send_email(serviceItemNumber, driver, testReporter,toEmail,attachment,msg);
 				testReporter.log(LogStatus.PASS, "select_service_item_and_send_email");
@@ -158,7 +160,7 @@ public class ComplianceManagementScenario extends CommonServiceItemTestScenario{
 		}
 	}
 
-	public void send_email_to_dhs(String dhsEmail) {
+	public void send_email_to_dhs(String dhsEmail) throws Exception {
 		try {
 			if (serviceItemNumber == null || serviceItemNumber.isEmpty())
 				throw new Exception("Service Item Number not generated");
@@ -177,7 +179,7 @@ public class ComplianceManagementScenario extends CommonServiceItemTestScenario{
 		
 	}
 	
-	public void submit_service_item_for_approval() {
+	public void submit_service_item_for_approval() throws Exception {
 		try {
 			ServiceItemsAction serviceAction = new ServiceItemsAction(driver, testReporter);
 

@@ -34,8 +34,9 @@ public class Scenario15_ClosingPTAandPIA {
 		driver = new ChromeDriver();
 		driver.manage().window().maximize(); // maximizes
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-		new SalesforceLogin(driver).login(Constants.salesforce_username, Constants.salesforce_password);
-		
+		//new SalesforceLogin(driver).login(Constants.salesforce_username, Constants.salesforce_password);
+		new SalesforceLogin(driver).login(Constants.salesforce_pstaff2_username_Admin, Constants.salesforce_pstaff2_password_Admin);
+		new SalesforceLogin(driver).internalUserLogin("Privacy Staff");
 		serviceItemCreator = new MultiTypeServiceItemCreator(driver);
 	}
 	
@@ -48,8 +49,8 @@ public class Scenario15_ClosingPTAandPIA {
 	@Test(testName = "Scenario_15_1",
 			description = "Scenario 15.1 - creating and closing PTA Service Item ",
 			priority = 1)
-	public void create_and_close_pta_service_item_manually_test_Scenario_15_1() {
-		String contact = "Test Automation Internal Account";
+	public void create_and_close_pta_service_item_manually_test_Scenario_15_1() throws Exception {
+		String contact = "Test Automation Internal Contact";
 		serviceItemCreator.create_pta_service_item_manually("", contact);
 		
 		serviceItemCreator.close_pta_service_item();
@@ -58,8 +59,8 @@ public class Scenario15_ClosingPTAandPIA {
 	@Test(testName = "Scenario_15_2",
 			description = "Scenario 15.2 - creating and closing PIA Service Item ",
 			priority = 2)
-	public void create_and_close_pia_service_item_manually_test_Scenario_15_2() {
-		String contact = "Test Automation Internal Account";
+	public void create_and_close_pia_service_item_manually_test_Scenario_15_2() throws Exception {
+		String contact = "Test Automation Internal Contact";
 		serviceItemCreator.create_pia_service_item_manually(contact);
 		
 		serviceItemCreator.close_pia_service_item();

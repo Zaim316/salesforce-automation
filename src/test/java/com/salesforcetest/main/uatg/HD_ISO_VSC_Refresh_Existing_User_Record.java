@@ -1,309 +1,518 @@
 package com.salesforcetest.main.uatg;
 
+import java.io.IOException;
+
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 
+import com.relevantcodes.extentreports.ExtentReports;
 import com.relevantcodes.extentreports.ExtentTest;
 import com.relevantcodes.extentreports.LogStatus;
 import com.salesforcetest.pages.salesforce.uatg.CustomerSearchAction;
+import com.salesforcetest.pages.salesforce.uatg.GetScreenShot;
 import com.salesforcetest.pages.salesforce.uatg.RefreshExistingUserRecordAction;
 
+import cucumber.api.java.en.Then;
+
 public class HD_ISO_VSC_Refresh_Existing_User_Record {
-	private WebDriver driver;
+	private WebDriver driver1;
 
-	private ExtentTest testReporter;
-	public HD_ISO_VSC_Refresh_Existing_User_Record(WebDriver driver) {
-		this.driver = driver;
+	private ExtentTest testReporter1;
+	private ExtentReports extent1;
+	public static String screenShotPath;
+	public HD_ISO_VSC_Refresh_Existing_User_Record(WebDriver driver1) {
+		this.driver1 = driver1;
 	}
-	public void setTestReporter(ExtentTest testReporter) {
-		this.testReporter = testReporter;
+	public void setTestReporter(ExtentTest testReporter1) {
+		this.testReporter1 = testReporter1;
 	}
-	public void verifyLoggedInUserProfile() {
+	public void setTestReporter(ExtentReports extent1) {
+		this.extent1 = extent1;
+	}
+	public void verifyLoggedInUserProfile() throws IOException {
 
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			refObj.verifyProfile();
-			testReporter.log(LogStatus.PASS, "Verifying the current logged in user profile:");
+			testReporter1.log(LogStatus.PASS, "Verifying the current logged in user profile:");
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Verifying the current logged in user profile:");
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Verifying the current logged in user profile:");
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
-	public void logInAsInternalUser(String user) {
+	public void logInAsInternalUser(String user) throws IOException {
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			refObj.logInAsInternalUser(user);
-			testReporter.log(LogStatus.PASS, "Verify log in as Internal User");
+			testReporter1.log(LogStatus.PASS, "Verify log in as Internal User");
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Verify log in as Internal User");
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Verify log in as Internal User");
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
-	public void customerSearch(String customer) {
+	public void customerSearch(String customer) throws IOException {
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			refObj.customerSearch(customer);
-			testReporter.log(LogStatus.PASS, "Search for required customer");
+			testReporter1.log(LogStatus.PASS, "Search for required customer");
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Search for required customer");
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Search for required customer");
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
-	public void customerDataRefresh() {
+	public void Set_QC_Percentage(String val) throws IOException {
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
+			refObj.searchHDISOVSCitems("One HD Supervisor");
+			refObj.logInAsInternalUser("One HD Supervisor");
+			refObj.setPercentage(val);
+			refObj.currentUserLogOut();
+			testReporter1.log(LogStatus.PASS, "Set percentage to "+val+" successful.");
+		} catch (Exception e) {
+			testReporter1.log(LogStatus.FAIL, "Set percentage to "+val+" successful.");
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
+			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
+		}
+	}
+	public void customerDataRefresh() throws IOException {
+		try {
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			refObj.customerRefresh();
-			testReporter.log(LogStatus.PASS, "Refreshing the input customer details and wait till refreshing mechanism is completed");
+			testReporter1.log(LogStatus.PASS, "Refreshing the input customer details and wait till refreshing mechanism is completed");
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Refreshing the input customer details and wait till refreshing mechanism is completed");
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Refreshing the input customer details and wait till refreshing mechanism is completed");
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
-	public void searchUser(String user) {
+	public void searchUser(String user) throws IOException {
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			refObj.searchHDISOVSCitems(user);
-			testReporter.log(LogStatus.PASS, "Search with required User");
+			testReporter1.log(LogStatus.PASS, "Search with required User");
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Search with required User");
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Search with required User");
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
-	public void searfchForApplicationRecord(String applicationId) {
+	public void searfchForApplicationRecord(String applicationId) throws IOException {
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			refObj.searchForApplicationRecordWithAppNo(applicationId);
-			testReporter.log(LogStatus.PASS, "Search with Application id in global search panel");
+			testReporter1.log(LogStatus.PASS, "Search with Application id in global search panel");
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Search with Application id in global search panel");
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Search with Application id in global search panel");
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
-	public void openRecordFromGlobalSearchResult(String applicationRecord2) {
+	public void openRecordFromGlobalSearchResult(String applicationRecord2) throws IOException {
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			refObj.openApplicationRecordFromGlobalSearchResultPanel(applicationRecord2);
-			testReporter.log(LogStatus.PASS, "Find and Open "+applicationRecord2+" record from Global Search result");
+			testReporter1.log(LogStatus.PASS, "Find and Open "+applicationRecord2+" record from Global Search result");
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Find and Open "+applicationRecord2+" record from Global Search result");
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Find and Open "+applicationRecord2+" record from Global Search result");
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
-	public void clickOnCreateNewItem() {
+	public void clickOnCreateNewItem() throws IOException {
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			refObj.createNewServiceItem();
-			testReporter.log(LogStatus.PASS, "Click on Create new Service item button");
+			testReporter1.log(LogStatus.PASS, "Click on Create new Service item button");
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Click on Create new Service item button");
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Click on Create new Service item button");
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
-	public void giveOrgName(String orgName) {
+	public void giveOrgName(String orgName) throws IOException {
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			refObj.setOrgName(orgName);
-			testReporter.log(LogStatus.PASS, "Give Organization Name : "+orgName);
+			testReporter1.log(LogStatus.PASS, "Give Organization Name : "+orgName);
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Give Organization Name : "+orgName);
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Give Organization Name : "+orgName);
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
-	public void giveEmailId(String email) {
+	public void giveEmailId(String email) throws IOException {
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			refObj.setEmail(email);
-			testReporter.log(LogStatus.PASS, "Give Email Id: "+email);
+			testReporter1.log(LogStatus.PASS, "Give Email Id: "+email);
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Give Email Id: "+email);
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Give Email Id: "+email);
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
-	public void giveSenderType(String senderType) {
+	public void giveSenderType(String senderType) throws IOException {
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			refObj.selectSenderType(senderType);
-			testReporter.log(LogStatus.PASS, "Give Sender Type Name : "+senderType);
+			testReporter1.log(LogStatus.PASS, "Give Sender Type Name : "+senderType);
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Give Sender Type Name : "+senderType);
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Give Sender Type Name : "+senderType);
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
-	public void giveSubjectAndDes() {
+	public void giveSubjectAndDes() throws IOException {
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			refObj.setRandomSubjectAndDesAndFormType();
-			testReporter.log(LogStatus.PASS, "Give Subject and Description Name.");
+			testReporter1.log(LogStatus.PASS, "Give Subject and Description Name.");
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Give Subject and Description Name.");
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Give Subject and Description Name.");
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
-	public void giveCategoryAndKind() {
+	public void giveCategoryAndKind() throws IOException {
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			refObj.setRandomCategoryAndKind();
-			testReporter.log(LogStatus.PASS, "Give Category and Kind Name.");
+			testReporter1.log(LogStatus.PASS, "Give Category and Kind Name.");
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Give Category and Kind Name.");
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Give Category and Kind Name.");
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
-	public void giveSIOrigin(String serviceItem) {
+	public void giveSIOrigin(String serviceItem) throws IOException {
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			refObj.selectSIOrigin(serviceItem);
-			testReporter.log(LogStatus.PASS, "Give Service Item Origin :"+serviceItem);
+			testReporter1.log(LogStatus.PASS, "Give Service Item Origin :"+serviceItem);
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Give Service Item Origin :"+serviceItem);
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Give Service Item Origin :"+serviceItem);
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
-	public void giveSInitialQueue(String initialQueue) {
+	public void giveSInitialQueue(String initialQueue) throws IOException {
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			refObj.selectInitialQueue(initialQueue);
-			testReporter.log(LogStatus.PASS, "Give Initial Queue : "+initialQueue);
+			testReporter1.log(LogStatus.PASS, "Give Initial Queue : "+initialQueue);
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Give Initial Queue : "+initialQueue);
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Give Initial Queue : "+initialQueue);
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
-	public void giveReceivedDate(String receivedDate) {
+	public void giveReceivedDate(String receivedDate) throws IOException {
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			refObj.setReceivedDate(receivedDate);
-			testReporter.log(LogStatus.PASS, "Give Received Date (any past date) : "+receivedDate);
+			testReporter1.log(LogStatus.PASS, "Give Received Date (any past date) : "+receivedDate);
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Give Received Date (any past date) : "+receivedDate);
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Give Received Date (any past date) : "+receivedDate);
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
-	public void saveNewServiceItem() {
+	public void saveNewServiceItem() throws IOException {
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			refObj.clickOnSaveSI();
-			testReporter.log(LogStatus.PASS, "Saving this new service item data");
+			testReporter1.log(LogStatus.PASS, "Saving this new service item data");
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Saving this new service item data");
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Saving this new service item data");
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
-	public void validateNewlyCreatedSI() {
+	public void validateNewlyCreatedSI() throws IOException {
 		String newlyCreatedSI = null;
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			newlyCreatedSI = (String) refObj.fetchServiceItemNo();
-			testReporter.log(LogStatus.PASS, "Validate new service item and new Service Item number :"+newlyCreatedSI);
+			testReporter1.log(LogStatus.PASS, "Validate new service item and new Service Item number :"+newlyCreatedSI);
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Validate new service item and new Service Item number :"+newlyCreatedSI);
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Validate new service item and new Service Item number :"+newlyCreatedSI);
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
-	public void createNewResponse() {
+	public void createNewResponse() throws IOException {
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			refObj.createNewResponse();
-			testReporter.log(LogStatus.PASS, "Creating new sevice response of new service item.");
+			testReporter1.log(LogStatus.PASS, "Creating new sevice response of new service item.");
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Creating new sevice response of new service item.");
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Creating new sevice response of new service item.");
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
-	public void verifySR() {
+	public void verifySR() throws IOException {
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			refObj.verifyNewResponseStatus();
-			testReporter.log(LogStatus.PASS, "Verify new sevice response status of new service item.");
+			testReporter1.log(LogStatus.PASS, "Verify new sevice response status of new service item.");
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Verify new sevice response status of new service item.");
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Verify new sevice response status of new service item.");
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
-	public void logOut() {
+	public void verifyUserCanChangeOwnerAsHDISOVSCuser() throws IOException {
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
+			refObj.verifyTheChangeOwnerFunctionalityAsHDISOVSC();
+			testReporter1.log(LogStatus.PASS, "Verify logging in as HD ISO VSC user can change the service item owner to queue VAWA_I918inquiriesNSC");
+		} catch (Exception e) {
+			testReporter1.log(LogStatus.FAIL, "Verify logging in as HD ISO VSC user can change the service item owner to queue VAWA_I918inquiriesNSC");
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
+			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
+		}
+	}
+	public void logOut() throws IOException {
+		try {
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			refObj.currentUserLogOut();
-			testReporter.log(LogStatus.PASS, "Logging out");
+			testReporter1.log(LogStatus.PASS, "Logging out");
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Logging out");
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Logging out");
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
-	public void searchWithSupervisorId(String user) {
+	public void searchWithSupervisorId(String user) throws IOException {
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			refObj.searchHDISOVSCitems(user);
-			testReporter.log(LogStatus.PASS, "Search with One HD Supervisor");
+			testReporter1.log(LogStatus.PASS, "Search with One HD Supervisor");
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Search with One HD Supervisor");
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Search with One HD Supervisor");
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
-	public void loginWithSupervisorId(String user) {
+	public void loginWithSupervisorId(String user) throws IOException {
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			refObj.logInAsInternalUser(user);
-			testReporter.log(LogStatus.PASS, "Login with One HD Supervisor");
+			testReporter1.log(LogStatus.PASS, "Login with One HD Supervisor");
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Login with One HD Supervisor");
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Login with One HD Supervisor");
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
-	public void selectRequiredSI() {
+	public void selectRequiredSI() throws IOException {
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			refObj.selectRequiredDropdownlist();
-			testReporter.log(LogStatus.PASS, "Open the new service item");
+			testReporter1.log(LogStatus.PASS, "Open the new service item");
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Open the new service item");
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Open the new service item");
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
-	public void approveTheServiceRqst() {
+	public void verifyUserCanChangeOwnerAsONEHDSUPERVISORuser() throws IOException {
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
+			refObj.verifyTheChangeOwnerFunctionalityAsHDSupervisor();
+			testReporter1.log(LogStatus.PASS, "Verify logging in as ONE HD SUPERVISOR user can change the service item owner to queue VAWA_ISOA");
+		} catch (Exception e) {
+			testReporter1.log(LogStatus.FAIL, "Verify logging in as ONE HD SUPERVISOR user can change the service item owner to queue VAWA_ISOA");
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
+			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
+		}
+	}
+	public void approveTheServiceRqst() throws IOException {
+		try {
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			refObj.approveServiceRqst();
-			testReporter.log(LogStatus.PASS, "Approve the service request/response");
+			testReporter1.log(LogStatus.PASS, "Approve the service request/response");
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Approve the service request/response");
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Approve the service request/response");
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
-	public void validateApproveRqstResponse() {
+	public void validateApproveRqstResponse() throws IOException {
 		try {
-			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver);
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
 			refObj.validateApprovedResponse();
-			testReporter.log(LogStatus.PASS, "Validate the approved request response");
+			testReporter1.log(LogStatus.PASS, "Validate the approved request response");
 		} catch (Exception e) {
-			testReporter.log(LogStatus.FAIL, "Validate the approved request response");
-			Assert.assertTrue(false);
+			testReporter1.log(LogStatus.FAIL, "Validate the approved request response");
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
 			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
+		}
+	}
+	public void closeRqstResponse() throws IOException {
+		try {
+			RefreshExistingUserRecordAction refObj = new RefreshExistingUserRecordAction(driver1);
+			refObj.closureFunction();
+			refObj.clickOnSaveSI();
+			testReporter1.log(LogStatus.PASS, "Validate the Error message while change the status as close and close the service Item after giving correct values.");
+		} catch (Exception e) {
+			testReporter1.log(LogStatus.FAIL, "Validate the Error message while change the status as close and close the service Item after giving correct values.");
+			screenShotPath = GetScreenShot.capture(driver1);
+			testReporter1.log(LogStatus.INFO, "Snapshot : " +testReporter1.addScreenCapture(screenShotPath));
+			e.printStackTrace();
+			extent1.endTest(testReporter1);
+			extent1.flush();
+			extent1.close();
+			Assert.assertTrue(false);
 		}
 	}
 }

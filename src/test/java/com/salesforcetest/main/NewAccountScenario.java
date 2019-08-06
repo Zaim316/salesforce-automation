@@ -17,7 +17,7 @@ public class NewAccountScenario
 		this.driver = driver;
 	}
 	
-	public void create_internal_account_and_contact() {
+	public void create_internal_account_and_contact() throws InterruptedException {
 		AccountScenario accountScenario = new AccountScenario(driver);
 		
 		try {
@@ -34,7 +34,7 @@ public class NewAccountScenario
 
 	}
 
-	public void create_external_account_and_contact() {
+	public void create_external_account_and_contact() throws InterruptedException {
 		AccountScenario accountScenario = new AccountScenario(driver);
 		
 		try {

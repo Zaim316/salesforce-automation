@@ -63,7 +63,11 @@ public class ReportingTest {
 		// example) as it closes the underlying stream.
 		// Once this method is called, calling any Extent method will throw an error.
 		// close() - To close all the operation
-		extent.close();
+		try {
 		driver.quit();
+		extent.close();
+		} catch (Exception e) {
+			
+		}
 	}
 }

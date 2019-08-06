@@ -4,6 +4,7 @@ import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
+import java.util.Calendar;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -11,7 +12,10 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 
 import com.salesforcetest.shared.Constants;
@@ -24,18 +28,17 @@ public class ServiceItemActionHelper {
 		Utils.sleep(4);
 
 		serviceItemsTab.click();
-
-		Utils.sleep(2);
+		
+		Utils.sleep(4);
 
 		serviceItemsPageOptions.click();
 
-		Utils.sleep(2);
+		Utils.sleep(4);
 
 		WebElement dropdown = driver.findElement(By.className("forceVirtualAutocompleteMenuList"));
 
 		dropdown.findElement(By.linkText(serviceItemLinkText)).click();
 	}
-
 	protected void change_service_item_owner(WebDriver driver, String type, String ownerSearchTxt) {
 		Utils.sleep(2);
 		driver.navigate().refresh();
@@ -109,20 +112,37 @@ public class ServiceItemActionHelper {
 		Utils.scrollWindow(driver, 100);
 		Actions action = new Actions(driver);
 		// Select status
-
+		Utils.sleep(1);
 		WebElement el = driver.findElement(By.cssSelector("button[title='Edit Status']"));
 		action.moveToElement(el).click().build().perform();
 
 		Utils.sleep(1);
-
-		driver.findElement(By.linkText(fromStatus)).click();
-
+		try {
+		((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView();", driver.findElement(By.xpath("//div[@role='list']/div[2]/descendant::span[text()='Service Item Number']")));
+		//System.out.println("I am here");
+		((JavascriptExecutor)driver).executeScript("arguments[0].click();", driver.findElement(By.xpath("//div[@role='list']/div[4]/descendant::a[@class='select']")));
+		} catch (Exception e) {
+			System.out.println("I am failed");
+		}
 		Utils.sleep(2);
+		/*try {
+			driver.findElement(By.linkText(fromStatus)).click();
+		} catch (Exception e) {
+			
+		}*/
+
+		//Utils.sleep(2);
 
 		// Select Archived
-		WebElement status = driver.findElement(By.linkText(toStatus));
-		action.moveToElement(status).click().build().perform();
-		
+		try {
+			WebElement status = driver.findElement(By.linkText(toStatus));
+			action.moveToElement(status).click().build().perform();
+		} catch (Exception e) {
+			((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView();", 
+					driver.findElement(By.xpath("//a[text()='"+toStatus+"']")));
+			WebElement status = driver.findElement(By.linkText(toStatus));
+			action.moveToElement(status).click().build().perform();
+		}
 		Utils.sleep(2);
 		
 		// Save
@@ -133,7 +153,7 @@ public class ServiceItemActionHelper {
 
 	protected void is_document_by_doc_name_found(WebDriver driver, String docName, int threshold, int counter)
 			throws Exception {
-		Utils.sleep(2);
+		Utils.sleep(4);
 
 		driver.findElement(By.linkText("Related")).click();
 
@@ -164,30 +184,46 @@ public class ServiceItemActionHelper {
 		}
 		
 	}
-
+	
 	protected void click_email_and_send(WebDriver driver, WebElement composeBox, String toEmail,
 			boolean withAttachments) throws Exception {
-
+		Robot robot = new Robot();
 		// Clicking email tab
 		driver.findElement(By.linkText("Email")).click();
 
 		Utils.sleep(2);
 
 		Utils.scrollWindow(driver,100);
-		
+		Utils.sleep(1);
+		try {
+		driver.findElement(By.xpath("//div[contains(@class,'forcePageBlockSectionRow')]/descendant::a[@class='select']")).click();
+		Utils.sleep(2);
+		driver.findElement(By.xpath("//div[@class='select-options']/ul/li/a[@title='USCIS No Reply <no-reply@uscis.dhs.gov>']")).click();
+		Utils.sleep(2);
+		} catch (Exception e) {
+			
+		}
 		// clicking cross in to email
 		List<WebElement> sections = composeBox.findElement(By.cssSelector("div"))
-				.findElements(By.className("forcePageBlockSectionRow"));
-
+						.findElements(By.className("forcePageBlockSectionRow"));
+		Utils.sleep(1);
 		// removing to address
 		sections.get(1).findElement(By.className("deleteAction")).click();
 
-		Utils.sleep(1);
-
+		Utils.sleep(2);
+		
 		sections.get(1).findElement(By.className("uiInputTextForAutocomplete")).sendKeys(toEmail);
 
 		Utils.sleep(1);
-
+		robot.keyPress(KeyEvent.VK_TAB);
+		Utils.sleep(1);
+		robot.keyRelease(KeyEvent.VK_TAB);
+		Utils.sleep(1);
+		
+		driver.findElement(By.xpath("//input[@maxlength='3000']")).click();
+		driver.findElement(By.xpath("//input[@maxlength='3000']")).clear();
+		Utils.sleep(1);
+		driver.findElement(By.xpath("//input[@maxlength='3000']")).sendKeys(Constants.email_subject);
 		Utils.scrollWindow(driver,450);
 
 		if (withAttachments) {
@@ -197,27 +233,82 @@ public class ServiceItemActionHelper {
 //					.findElement(By.className("uiPopupTrigger")).click();
 
 			// use templates
-			List<WebElement> iconList = driver.findElements(By.className("cuf-attachmentsItem"));
+			//List<WebElement> iconList = driver.findElements(By.className("cuf-attachmentsItem"));
 
 			// Click adding template
-			iconList.get(2).click();
+			//iconList.get(3).click();
+			
+			
+			driver.findElement(By.xpath("//*[@class='cuf-attachmentsItem'][3]/div")).click();
+			
+			Utils.sleep(2);
 
+			//driver.findElement(By.linkText("Insert a template...")).click();
+			//driver.findElement(By.xpath("//*[text()='Insert a template...']")).click();
+			//Actions actObj = new Actions(driver);
+			//actObj.moveToElement(driver.findElement(By.xpath("//div/ul/li[1]/a[contains(@title,'Insert a template')]"))).build().perform();
+			
 			Utils.sleep(1);
-
-			driver.findElement(By.linkText("Insert a template...")).click();
-
+			/*robot.keyPress(KeyEvent.VK_DOWN);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_DOWN);
+			Utils.sleep(2);*/
+			robot.keyPress(KeyEvent.VK_DOWN);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_DOWN);
+			Utils.sleep(2);
+			robot.keyPress(KeyEvent.VK_ENTER);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_ENTER);
 			Utils.sleep(3);
+			WebElement modal = driver.findElement(By.xpath("//div[contains(@class,'modal-body')]"));
 
-			WebElement modal = driver.findElement(By.className("modal-body"));
+			//Select templateDrop = new Select(modal.findElement(By.tagName("select")));
+			Select templateDrop = new Select(driver.findElement(By.xpath("//*[text()='My Templates']/parent::*")));
 
-			Select templateDrop = new Select(modal.findElement(By.tagName("select")));
+			templateDrop.selectByVisibleText("All Templates");
 
-			templateDrop.selectByVisibleText("Sample Lightning Templates");
+			Utils.sleep(4);
 
+			//modal.findElement(By.cssSelector("a[title='Notification Letter Without Credit Monitoring']")).click();
+			//driver.findElement(By.xpath("//a[@title='Notification Letter Without Credit Monitoring']/parent::th")).click();
+			//driver.findElement(By.xpath("html/body/div[5]/div[2]/div[2]/div[2]/div/div[2]/div[3]/div[2]/div/div/table/tbody/tr[1]/th/a")).click();*/
+			robot.keyPress(KeyEvent.VK_TAB);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_TAB);
+			Utils.sleep(2);
+			robot.keyPress(KeyEvent.VK_TAB);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_TAB);
+			Utils.sleep(2);
+			robot.keyPress(KeyEvent.VK_TAB);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_TAB);
+			Utils.sleep(2);
+			robot.keyPress(KeyEvent.VK_TAB);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_TAB);
+			Utils.sleep(2);
+			robot.keyPress(KeyEvent.VK_TAB);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_TAB);
+			Utils.sleep(2);
+			robot.keyPress(KeyEvent.VK_TAB);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_TAB);
+			Utils.sleep(2);
+			robot.keyPress(KeyEvent.VK_TAB);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_TAB);
+			Utils.sleep(2);
+			robot.keyPress(KeyEvent.VK_TAB);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_TAB);
+			Utils.sleep(2);
+			robot.keyPress(KeyEvent.VK_ENTER);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_ENTER);
 			Utils.sleep(3);
-
-			modal.findElement(By.cssSelector("a[title='SAMPLE: Called, But No Answer']")).click();
-
 			WebElement subjectInput = getElementByLableText(driver, "Subject");
 			subjectInput.clear();
 			subjectInput.sendKeys(Constants.email_subject);
@@ -231,7 +322,7 @@ public class ServiceItemActionHelper {
 		
 		driver.findElement(By.xpath("//span[text()='Send']")).click();
 		
-		Utils.sleep(3);
+		Utils.sleep(5);
 	}
 
 	protected void update_service_item_type(WebDriver driver, String type, WebElement saveButton) throws Exception {
@@ -253,13 +344,13 @@ public class ServiceItemActionHelper {
 			// Save
 			saveButton.click();
 
-			Utils.sleep(5);
+			Utils.sleep(4);
 
 			driver.navigate().refresh();
 
 			Utils.sleep(2);
 		} catch (Exception e) {
-
+			driver.switchTo().alert().accept();
 		}
 	}
 
@@ -314,9 +405,17 @@ public class ServiceItemActionHelper {
 		robot.keyPress(KeyEvent.VK_ENTER);
 		robot.keyRelease(KeyEvent.VK_ENTER);
 		
-		Utils.sleep(5);
-		
-		driver.findElement(By.className("modal-footer")).findElement(By.tagName("button")).click();
+		Utils.sleep(8);
+		try {
+//		(new WebDriverWait(driver, 10)).until(ExpectedConditions.visibilityOf(driver.findElement(By.className("modal-footer")).findElement(By.tagName("button"))));
+			(new WebDriverWait(driver, 10)).until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//*[contains(text(),'1 of 1 file uploaded')]"))));
+		} catch (Exception e) {
+			
+		}
+		((JavascriptExecutor) driver).executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", 
+				driver.findElement(By.xpath("//*[contains(text(),'1 of 1 file uploaded')]")));
+				Utils.sleep(2);
+				driver.findElement(By.xpath("//span[text()='Done']/parent::button")).click();
 		
 		Utils.sleep(2);
 	}

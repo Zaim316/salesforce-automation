@@ -6,12 +6,15 @@ import java.util.List;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 
 import com.relevantcodes.extentreports.ExtentTest;
@@ -26,7 +29,9 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 
 	private ExtentTest testReporter;
 
-	@FindBy(xpath = "//*[@id=\"oneHeader\"]/div[3]/one-appnav/div/one-app-nav-bar/nav/ul/li[5]/a")
+	//@FindBy(xpath = ".//*[@id='oneHeader']/descendant::*[@data-id='Case']")// or ".//*[@id='oneHeader']/descendant::*[@role='listitem'][5]/a/span[text()='Service Items']"
+	//@FindBy(xpath = ".//*[@id='oneHeader']/descendant::*[@role='listitem'][4]")
+	@FindBy(xpath = "//a[@title='Service Items']/parent::*")
 	WebElement serviceItemsTab;
 
 	@FindBy(css = "a[title='Select List View']")
@@ -72,7 +77,7 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 	public void select_incident_queue_list() throws Exception {
 		select_service_item_list_option(driver, "Incident Queue", serviceItemsTab, serviceItemsPageOptions);
 	}
-
+	
 	public String assert_incident_name_get_service_item_number() throws Exception {
 		boolean loop = true;
 		int counter = 1;
@@ -82,7 +87,8 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 			refreshBtn.click();
 
 			Utils.sleep(5);
-
+			
+			try {
 			String actualSubject = listDiv.findElement(By.tagName("table"))
 					.findElement(By.cssSelector("tbody > tr:nth-child(1) > td:nth-child(5)")).getText();
 
@@ -94,6 +100,9 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 				loop = false;
 			} else {
 				counter++;
+			}
+			} catch (Exception e) {
+				
 			}
 
 			if (counter == rounds) {
@@ -120,10 +129,13 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 
 	public void select_service_item(String serviceItemNo) throws Exception {
 		
-		select_service_item_list_option(driver, "My Service Items", serviceItemsTab, serviceItemsPageOptions);
-
 		Utils.sleep(3);
-
+		select_service_item_list_option(driver, "My Service Items", serviceItemsTab, serviceItemsPageOptions);
+		
+		Utils.sleep(3);
+		((JavascriptExecutor) driver).executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", 
+				listDiv.findElement(By.linkText(serviceItemNo)));
+		Utils.sleep(1);
 		// clicking service item
 		listDiv.findElement(By.linkText(serviceItemNo)).click();
 
@@ -133,6 +145,7 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 	}
 
 	public void send_email_from_service_item(String toEmail) throws Exception {
+		Utils.sleep(3);
 		click_email_and_send(driver, composeBox, toEmail, true);
 	}
 
@@ -158,11 +171,20 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 		WebElement violatorTxt = getElementByLableText(driver, "Violator");
 		violatorTxt.clear();
 		violatorTxt.sendKeys("PVY");
-
+		
 		Utils.sleep(2);
-
+		
 		WebElement elViolator = driver.findElement(By.cssSelector("div[title='PVY - Office of Privacy']"));
 		elViolator.click();
+
+		Utils.sleep(2);
+		//((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView();", 
+		//		driver.findElement(By.xpath("//span[.//span[text()='1367 Protective Status Information']]")));
+		Utils.scrollWindow(driver, 80);
+		Utils.sleep(2);
+		driver.findElement(By.xpath("//span[text()='1367 Protective Status Information']/parent::span/following-sibling::div")).click();
+		Utils.sleep(2);
+		driver.findElement(By.linkText("No")).click();
 
 		Utils.sleep(2);
 
@@ -218,7 +240,11 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 	public void close_incident_service_item() throws Exception {
 
 		// Change status to Archived
+		try {
 		change_service_item_status(driver, "In Progress", "Archived", saveButton);
+		} catch (Exception e) {
+			
+		}
 
 		Utils.sleep(4);
 
@@ -234,9 +260,11 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 
 		// put Assert on error message
 		assert_error_msg(driver, ExpectedErrorMessageList.SCENARIO_2_5_INCIDENT_CLOSED_ERROR_MSG);
-
+		((JavascriptExecutor)driver).executeScript("arguments[0].click();", 
+				driver.findElement(By.xpath("//div[@role='list']/div[3]/descendant::a[@class='select']")));
 		// Change
-		driver.findElement(By.linkText("Suspected Incident")).click();
+		Utils.sleep(1);
+		//driver.findElement(By.linkText("Suspected Incident")).click();
 
 		Utils.sleep(1);
 
@@ -253,8 +281,10 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 		// put Assert on error message
 		assert_error_msg(driver, ExpectedErrorMessageList.SCENARIO_2_5_INCIDENT_REASON_ERROR_MSG);
 
-		Utils.scrollWindow(driver);
-
+		//Utils.scrollWindow(driver);
+		((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView();", 
+				driver.findElement(By.xpath("//div[@role='list']/div[7]/descendant::span[text()='Reason']")));
+		Utils.sleep(2);
 		// Edit reason
 		WebElement reasonLbl = getElementByLableText(driver, "Reason");
 		reasonLbl.clear();
@@ -270,7 +300,14 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 		driver.navigate().refresh();
 
 		Utils.sleep(3);
-
+		try {
+			(new WebDriverWait(driver, 10)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//ul[@role='list']/li[2]")));
+			((JavascriptExecutor) driver).executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", 
+					driver.findElement(By.xpath("//ul[@role='list']/li[2]")));
+			Utils.sleep(2);
+			} catch (Exception e) {
+				
+			}
 		if (Utils.handleAlert(driver))
 			throw new Exception("Closing Incident test failed.");
 
@@ -357,7 +394,7 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 			refreshBtn.click();
 
 			Utils.sleep(5);
-
+			try {
 			String actualSubject = listDiv.findElement(By.tagName("table"))
 					.findElement(By.cssSelector("tbody > tr:nth-child(1) > td:nth-child(6)")).getText();
 
@@ -370,7 +407,9 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 			} else {
 				counter++;
 			}
-
+			} catch (Exception e) {
+				
+			}
 			if (counter == rounds) {
 				loop = false;
 				throw new Exception("Complience incident not created from external email with subject: "
@@ -419,19 +458,20 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 	}
 
 	public void submit_service_item_for_approval(String commentForApproval) throws Exception {
+		(new WebDriverWait(driver, 8)).until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Submit for Approval")));
 		driver.findElement(By.linkText("Submit for Approval")).click();
 
 		Utils.sleep(1);
-
+		(new WebDriverWait(driver, 8)).until(ExpectedConditions.visibilityOf(driver.findElement(By.className("modal-body")).findElement(By.tagName("textarea"))));
 		// Inserting message as comment for approval
 		driver.findElement(By.className("modal-body")).findElement(By.tagName("textarea")).sendKeys(commentForApproval);
 
 		Utils.sleep(1);
 
 		// Send
-		driver.findElement(By.className("modal-footer")).findElement(By.className("actionButton")).click();
-
-		Utils.sleep(2);
+		//driver.findElement(By.className("modal-footer")).findElement(By.className("actionButton")).click();
+		driver.findElement(By.className("actionButton")).click();
+		Utils.sleep(4);
 	}
 
 	public void send_email_from_service_item_from_dhs(String dhsEmail) throws Exception {
@@ -456,17 +496,18 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 			throws Exception {
 
 		Utils.sleep(3);
-
+		//((JavascriptExecutor) driver).executeScript("arguments[0].click();", serviceItemsTab);
 		serviceItemsTab.click();
-
+		
 		Utils.sleep(2);
-
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("a[title='New']")));
 		driver.findElement(By.cssSelector("a[title='New']")).click();
 
-		Utils.sleep(2);
-
-		driver.findElement(By.className("modal-footer")).findElement(By.xpath("//span[text()='Next']")).click();
-
+		Utils.sleep(4);
+		driver.findElement(By.xpath("//span[text()='Compliance']/parent::div/preceding-sibling::div[1]")).click();
+		Utils.sleep(1);
+		//driver.findElement(By.className("modal-footer")).findElement(By.xpath("//span[text()='Next']")).click();
+		driver.findElement(By.xpath("//span[text()='Next']")).click();
 		if (!"Privacy Threshold Analysis".equalsIgnoreCase(serviceItemType)) {
 			Utils.sleep(2);
 
@@ -489,10 +530,13 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 		contactLbl.sendKeys(contact);
 
 		Utils.sleep(2);
-
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div[title='" + contact + "']")));
+		((JavascriptExecutor) driver).executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", 
+		driver.findElement(By.cssSelector("div[title='" + contact + "']")));
+		Utils.sleep(1);
 		driver.findElement(By.cssSelector("div[title='" + contact + "']")).click();
 
-		Utils.sleep(1);
+		Utils.sleep(2);
 
 		// Fill subject
 		String subject = serviceItemType + Constants.service_item_subject_suffix;
@@ -500,10 +544,10 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 		subjectLbl.clear();
 		subjectLbl.sendKeys(subject);
 
-		Utils.sleep(1);
-
-		driver.findElement(By.className("modal-footer")).findElement(By.cssSelector("button[title='Save']")).click();
-
+		Utils.sleep(2);
+		
+		//driver.findElement(By.className("modal-footer")).findElement(By.cssSelector("button[title='Save']")).click();
+		driver.findElement(By.cssSelector("button[title='Save']")).click();
 		if (Utils.fluentWait(successMessagePopup, driver, 10, 1) == null) {
 			throw new Exception(serviceItemType + " not created.");
 		}
@@ -531,15 +575,34 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 			Utils.sleep(2);
 
 //			Utils.scrollWindow(driver, 900);
-
-			WebElement iframeParent = Utils.scrollToFindElement(driver, By.tagName("force-aloha-page"));
-
+			((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView();", 
+					driver.findElement(By.xpath("//*[text()='Merge Duplicates']/parent::button")));
+			Utils.sleep(2);
+			((JavascriptExecutor) driver).executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", 
+					driver.findElement(By.xpath("//*[text()='Merge Duplicates']/parent::button")));
+			Utils.sleep(1);
+			//WebElement iframeParent = Utils.scrollToFindElement(driver, By.xpath("//*[@title='MergeDuplicateServiceItems']"));
+			driver.findElement(By.xpath("//*[text()='Merge Duplicates']/parent::button")).click();
 			// Switch to iframe
-			driver.switchTo().frame(iframeParent.findElement(By.tagName("iframe")));
+			Utils.sleep(1);
+			driver.switchTo().frame(driver.findElement(By.xpath("//*[@title='MergeDuplicateServiceItems']/descendant::iframe[1]")));
 
 			WebElement findButton = driver.findElement(By.className("lookupInput")).findElement(By.tagName("a"));
-
-			Utils.buttonClick(driver, findButton);
+			((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView();", 
+					findButton);
+			Utils.sleep(2);
+			try {
+				findButton.click();
+			} catch (Exception e) {
+				driver.switchTo().defaultContent();
+				((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView();", 
+						driver.findElement(By.xpath("//*[text()='Merge Duplicates']/parent::button")));
+				Utils.sleep(1);
+				driver.findElement(By.xpath("//*[text()='Merge Duplicates']/parent::button")).click();
+				Utils.sleep(1);
+				driver.switchTo().frame(driver.findElement(By.xpath("//*[@title='MergeDuplicateServiceItems']/descendant::iframe[1]")));
+				((JavascriptExecutor)driver).executeScript("arguments[0].click();", findButton);
+			}
 
 			// Switch back to default salesforce webpage
 			driver.switchTo().defaultContent();
@@ -580,11 +643,19 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 
 			Utils.sleep(2);
 
-			driver.switchTo().frame(iframeParent.findElement(By.tagName("iframe")));
-
+			//driver.switchTo().frame(iframeParent.findElement(By.tagName("iframe")));
+			driver.switchTo().frame(driver.findElement(By.xpath("//*[@title='MergeDuplicateServiceItems']/descendant::iframe[1]")));
+			try {
 			driver.findElement(By.cssSelector("input[title='Merge']")).click();
+			} catch (Exception e) {
+				driver.switchTo().defaultContent();
+				driver.findElement(By.xpath("//*[text()='Merge Duplicates']/parent::button")).click();
+				Utils.sleep(1);
+				driver.switchTo().frame(driver.findElement(By.xpath("//*[@title='MergeDuplicateServiceItems']/descendant::iframe[1]")));
+				driver.findElement(By.cssSelector("input[title='Merge']")).click();
+			}
 
-			Utils.sleep(2);
+			Utils.sleep(4);
 
 			driver.navigate().refresh();
 
@@ -671,7 +742,14 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 		driver.navigate().refresh();
 
 		Utils.sleep(3);
-
+		try {
+			(new WebDriverWait(driver, 10)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//ul[@role='list']/li[2]")));
+			((JavascriptExecutor) driver).executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", 
+					driver.findElement(By.xpath("//ul[@role='list']/li[2]")));
+			Utils.sleep(2);
+			} catch (Exception e) {
+				
+			}
 		testReporter.log(LogStatus.PASS, "Verify closing privacy service item.");
 		Utils.sleep(3);
 	}
@@ -708,7 +786,14 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 		driver.navigate().refresh();
 
 		Utils.sleep(3);
-
+		try {
+			(new WebDriverWait(driver, 10)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//ul[@role='list']/li[2]")));
+			((JavascriptExecutor) driver).executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", 
+					driver.findElement(By.xpath("//ul[@role='list']/li[2]")));
+			Utils.sleep(2);
+			} catch (Exception e) {
+				
+			}
 		testReporter.log(LogStatus.PASS, "Verify closing PIA service item.");
 		Utils.sleep(3);
 	}
@@ -716,9 +801,7 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 	public void close_pta_service_item() throws Exception {
 		// Change status to Closed
 		change_service_item_status(driver, "In Progress", "Closed", saveButton);
-
 		Utils.sleep(4);
-
 		// put Assert on error message
 		assert_error_msg(driver, ExpectedErrorMessageList.SCENARIO_15_1_PTA_CLOSED_ERROR_MSG);
 
@@ -750,7 +833,14 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 		driver.navigate().refresh();
 
 		Utils.sleep(3);
-
+		try {
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//ul[@role='list']/li[2]")));
+		((JavascriptExecutor) driver).executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", 
+				driver.findElement(By.xpath("//ul[@role='list']/li[2]")));
+		Utils.sleep(2);
+		} catch (Exception e) {
+			
+		}
 		testReporter.log(LogStatus.PASS, "Verify closing PTA service item.");
 		Utils.sleep(3);
 	}
@@ -792,26 +882,41 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 		driver.navigate().refresh();
 
 		Utils.sleep(3);
-
+		try {
+			(new WebDriverWait(driver, 10)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//ul[@role='list']/li[2]")));
+			((JavascriptExecutor) driver).executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", 
+					driver.findElement(By.xpath("//ul[@role='list']/li[2]")));
+			Utils.sleep(2);
+			} catch (Exception e) {
+				
+			}
 		testReporter.log(LogStatus.PASS, "Verify closing PTA service item.");
 		Utils.sleep(3);
 	}
 	
 	public void view_edit_si_as_team_member(String serviceItemNo) {
-		Utils.sleep(5);
-		
+		Utils.sleep(2);
+		WebDriverWait wait = new WebDriverWait (driver, 10);
+		driver.navigate().refresh();
+		Utils.sleep(4);
+		wait.until(ExpectedConditions.visibilityOf(serviceItemsTab));
 		select_service_item_list_option(driver, "My Case Teams", serviceItemsTab, serviceItemsPageOptions);
-		
-		Utils.sleep(3);
-
+		wait.until(ExpectedConditions.visibilityOf(listDiv));
+		Utils.sleep(2);
+		System.out.println("New Service item number :"+serviceItemNo);
 		// clicking service item
+		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", listDiv.findElement(By.linkText(serviceItemNo)));
+		Utils.sleep(1);
+		((JavascriptExecutor) driver).executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", 
+		listDiv.findElement(By.linkText(serviceItemNo)));
+		Utils.sleep(2);
 		listDiv.findElement(By.linkText(serviceItemNo)).click();
 
 		Utils.sleep(3);
 		
 		//edit subject
 		try {
-			Utils.scrollWindow(driver, 300);
+			Utils.scrollWindow(driver, 350);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

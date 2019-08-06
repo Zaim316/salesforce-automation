@@ -43,14 +43,14 @@ public class AccountCreationMapper {
 	}
 
 	@When("^Create Internal Account and Contact$")
-	public void test_create_internal_account() {
+	public void test_create_internal_account() throws InterruptedException {
 		driver.get(Constants.salesforce_url);
 
 		nas.create_internal_account_and_contact();
 	}
 
 	@When("^Create External Account and Contact$")
-	public void test_create_external_account() {
+	public void test_create_external_account() throws InterruptedException {
 		driver.get(Constants.salesforce_url);
 
 		nas.create_external_account_and_contact();

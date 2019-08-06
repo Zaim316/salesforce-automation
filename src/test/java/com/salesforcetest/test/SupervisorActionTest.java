@@ -1,10 +1,13 @@
 package com.salesforcetest.test;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
@@ -31,11 +34,21 @@ public class SupervisorActionTest {
 	@BeforeClass
 	public void init() {
 		System.setProperty("webdriver.chrome.driver", "driver//chromedriver.exe");
-		driver = new ChromeDriver();
+		Map<String, Object> prefs = new HashMap<String, Object>();
+		
+		prefs.put("profile.default_content_setting_values.notifications", 2);
+
+		        // Create object of ChromeOption class
+		ChromeOptions options = new ChromeOptions();
+
+		        // Set the experimental option
+		options.setExperimentalOption("prefs", prefs);
+		driver = new ChromeDriver(options);
 		driver.manage().window().maximize(); // maximizes
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-		new SalesforceLogin(driver).login(Constants.supervisor_salesforce_username, Constants.supervisor_salesforce_password);
-		
+		//new SalesforceLogin(driver).login(Constants.supervisor_salesforce_username, Constants.supervisor_salesforce_password);
+		new SalesforceLogin(driver).login(Constants.salesforce_pstaff2_username_Admin, Constants.salesforce_pstaff2_password_Admin);
+		new SalesforceLogin(driver).internalUserLogin("Privacy Branch Chief");
 		supervisor = new SupervisorScenario(driver);
 	}
 
@@ -52,22 +65,20 @@ public class SupervisorActionTest {
 	
 	@Test(testName = "Scenario_10_2", description = "Scenario 10.1 - Reject Service Item", priority = 2)
 	public void reject_service_item_S10_2() {
-		driver.get(Constants.salesforce_url);
-
+		//driver.get(Constants.salesforce_url);
 		supervisor.reject_service_item();
 	}
 	
 	@Test(testName = "Scenario_11_1", description = "Scenario 11.1 - Reassign Service Item", priority = 3)
 	public void reassign_service_item_S11_1() {
-		driver.get(Constants.salesforce_url);
-
+		//driver.get(Constants.salesforce_url);
 		String newUser = "Privacy Staff";
 		supervisor.reassign_service_item(newUser);
 	}
 	
 	@Test(testName = "Scenario_12_1", description = "Scenario 12.1 - Setting up training", priority = 4)
 	public void setting_up_training_S12_1() {
-		driver.get(Constants.salesforce_url);
+		//driver.get(Constants.salesforce_url);
 
 		supervisor.set_up_training();
 	}
