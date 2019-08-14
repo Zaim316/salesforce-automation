@@ -332,7 +332,7 @@ public class ServiceItemActionHelper {
 		WebElement el = driver.findElement(By.cssSelector("button[title='Edit Type']"));
 		action.moveToElement(el).click().build().perform();
 		Utils.sleep(2);
-		try {
+		//try {
 			driver.findElement(By.linkText("--None--")).click();
 
 			Utils.sleep(2);
@@ -349,9 +349,9 @@ public class ServiceItemActionHelper {
 			driver.navigate().refresh();
 
 			Utils.sleep(2);
-		} catch (Exception e) {
+		/*} catch (Exception e) {
 			driver.switchTo().alert().accept();
-		}
+		}*/
 	}
 
 	protected String getSuccessMessage(WebElement successPopup) {

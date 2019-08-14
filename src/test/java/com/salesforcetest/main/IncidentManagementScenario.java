@@ -1,5 +1,7 @@
 package com.salesforcetest.main;
 
+import java.io.IOException;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -9,6 +11,7 @@ import com.relevantcodes.extentreports.ExtentTest;
 import com.relevantcodes.extentreports.LogStatus;
 import com.salesforcetest.pages.gmail.MailSender;
 import com.salesforcetest.pages.salesforce.ServiceItemsAction;
+import com.salesforcetest.pages.salesforce.uatg.GetScreenShot;
 import com.salesforcetest.shared.Constants;
 import com.salesforcetest.shared.Incident;
 import com.salesforcetest.shared.Reporter;
@@ -17,7 +20,7 @@ import com.salesforcetest.shared.Utils;
 public class IncidentManagementScenario extends CommonServiceItemTestScenario {
 
 	private WebDriver driver;
-
+	public static String screenShotPath;
 	private String serviceItemNumber;
 
 	private ExtentTest testReporter;
@@ -31,9 +34,10 @@ public class IncidentManagementScenario extends CommonServiceItemTestScenario {
 	 * Scenario 2.1
 	 * 
 	 * @param cr
+	 * @throws IOException 
 	 */
 
-	public void send_report_email_from_gmail(Reporter reporter) {
+	public void send_report_email_from_gmail(Reporter reporter) throws IOException {
 		try {
 			String subject = ((Incident) reporter.getType()).getSubject();
 			String msg = ((Incident) reporter.getType()).getMessage();
@@ -44,6 +48,8 @@ public class IncidentManagementScenario extends CommonServiceItemTestScenario {
 		} catch (Exception e) {
 //			testReporter.log(LogStatus.FAIL, "Automated Test for sending incident email.");
 			testReporter.log(LogStatus.FAIL, "send_report_email_from_gmail");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			Assert.assertEquals(e.getLocalizedMessage(), "Passed");
 			e.printStackTrace();
 		}
@@ -66,6 +72,8 @@ public class IncidentManagementScenario extends CommonServiceItemTestScenario {
 		} catch (Exception e) {
 //			Utils.log("Error","Automated Test for asserting created incident ticket. - Failed");
 			testReporter.log(LogStatus.FAIL, "select_and_assert_incident_queue");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			Assert.assertEquals(e.getLocalizedMessage(), "Passed");
 			e.printStackTrace();
 		}
@@ -75,9 +83,10 @@ public class IncidentManagementScenario extends CommonServiceItemTestScenario {
 	 * Scenario 2.2
 	 * 
 	 * This step will make incident 'a service item'
+	 * @throws IOException 
 	 */
 
-	public void select_incident_and_change_owner() {
+	public void select_incident_and_change_owner() throws IOException {
 		try {
 
 			if (serviceItemNumber == null || serviceItemNumber.isEmpty())
@@ -93,6 +102,8 @@ public class IncidentManagementScenario extends CommonServiceItemTestScenario {
 		} catch (Exception e) {
 //			Utils.log("Error","Automated Test for changing incident owner. - Failed");
 			Assert.assertEquals(e.getLocalizedMessage(), "Passed");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			testReporter.log(LogStatus.FAIL, "select_incident_and_change_owner");
 			e.printStackTrace();
 		}
@@ -118,6 +129,8 @@ public class IncidentManagementScenario extends CommonServiceItemTestScenario {
 		} catch (Exception e) {
 //			Utils.log("Error","Automated Test for asserting violator in service item - Failed");
 			testReporter.log(LogStatus.FAIL, "verify_submitter_voilator_on_service_item");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			Assert.assertEquals(e.getLocalizedMessage(), "Passed");
 			e.printStackTrace();
 		}
@@ -143,6 +156,8 @@ public class IncidentManagementScenario extends CommonServiceItemTestScenario {
 			}
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "select_service_item_and_send_email_and_verify_attachment");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			Assert.assertEquals(e.getLocalizedMessage(), "Passed");
 			e.printStackTrace();
 		}
@@ -167,6 +182,8 @@ public class IncidentManagementScenario extends CommonServiceItemTestScenario {
 			testReporter.log(LogStatus.PASS, "closing_service_item");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "closing_service_item");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			Assert.assertEquals(e.getLocalizedMessage(), "Passed");
 			e.printStackTrace();
 		}
@@ -188,6 +205,8 @@ public class IncidentManagementScenario extends CommonServiceItemTestScenario {
 			testReporter.log(LogStatus.PASS, "reply_closing_email_in_reporter_account");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "reply_closing_email_in_reporter_account");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			Assert.assertEquals(e.getLocalizedMessage(), "Passed");
 			e.printStackTrace();
 		}
@@ -212,6 +231,8 @@ public class IncidentManagementScenario extends CommonServiceItemTestScenario {
 			testReporter.log(LogStatus.PASS, "verify_status_and_owner_after_reply_closing_email_in_reporter_account");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "verify_status_and_owner_after_reply_closing_email_in_reporter_account");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			Assert.assertEquals(e.getLocalizedMessage(), "Passed");
 			e.printStackTrace();
 		}

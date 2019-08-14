@@ -1,5 +1,6 @@
 package com.salesforcetest.mapper;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.WebDriver;
@@ -43,14 +44,14 @@ public class AccountCreationMapper {
 	}
 
 	@When("^Create Internal Account and Contact$")
-	public void test_create_internal_account() throws InterruptedException {
+	public void test_create_internal_account() throws InterruptedException, IOException {
 		driver.get(Constants.salesforce_url);
 
 		nas.create_internal_account_and_contact();
 	}
 
 	@When("^Create External Account and Contact$")
-	public void test_create_external_account() throws InterruptedException {
+	public void test_create_external_account() throws InterruptedException, IOException {
 		driver.get(Constants.salesforce_url);
 
 		nas.create_external_account_and_contact();

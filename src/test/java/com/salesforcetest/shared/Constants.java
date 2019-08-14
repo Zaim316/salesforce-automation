@@ -70,12 +70,12 @@ public class Constants {
 
 	//Salesforce UATG credentials
 	
-	public static final String salesforce_url_uatg = "https://uscis--uatg.my.salesforce.com";
-	//public static final String salesforce_url_uatg = "https://uscis--uatg1.my.salesforce.com";
+	//public static final String salesforce_url_uatg = "https://uscis--uatg.my.salesforce.com";
+	public static final String salesforce_url_uatg = "https://uscis--uatg.my.salesforce.com/?login";
 	
-	public static final String salesforce_username_uatg = "zabid_cis@acumensolutions.com.uatg";
+	//public static final String salesforce_username_uatg = "zabid_cis@acumensolutions.com.uatg";
 	
-	//public static final String salesforce_username_uatg = "mohammad.z.abid@uscis.dhs.gov.uatg1";
+	public static final String salesforce_username_uatg = "mohammad.z.abid@uscis.dhs.gov.uatg";
 
 	public static final String salesforce_password_uatg = "acumentest2";
 	

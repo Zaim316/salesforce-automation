@@ -1,5 +1,6 @@
 package com.salesforcetest.test;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -100,7 +101,7 @@ public class IncidentManagementScenarioTest {
 	}
 	
 	@Test(testName = "Scenario_2_2", description = "Scenario 2.2", priority=2, dependsOnMethods = { "IncidentManagementScenario_Test_S21" })
-	public void IncidentManagementScenario_Test_S22() {
+	public void IncidentManagementScenario_Test_S22() throws IOException {
 		Utils.switch_to_tab(driver, 1);
 				
 		driver.get(driver.getCurrentUrl());

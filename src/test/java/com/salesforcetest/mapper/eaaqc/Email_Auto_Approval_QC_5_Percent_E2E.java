@@ -2,6 +2,8 @@ package com.salesforcetest.mapper.eaaqc;
 
 import java.awt.AWTException;
 import java.awt.Robot;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,7 +46,7 @@ import cucumber.api.java.en.When;
 public class Email_Auto_Approval_QC_5_Percent_E2E {
 	public static WebDriver driver;
 	private WebElement element;
-	public static String newSINo, emailLink, subjectLine, screenShotPath;
+	public static String newSINo, emailLink, subjectLine, screenShotPath, fileNm;
 	private By ele;
 	String workingDir = System.getProperty("user.dir");
 	
@@ -1743,22 +1745,281 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 		}
 		}
 		if (flag == "Failed") {
-		testReporter.log(LogStatus.FAIL, "Opened the child service item failure(Child item did not get created) or child SI of parent SI "+newSINo+" is not present in the page.");
-		screenShotPath = GetScreenShot.capture(driver);
-		testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
+			testReporter.log(LogStatus.FAIL, "Opened the child service item failure(Child item did not get created) or child SI of parent SI "+newSINo+" is not present in the page.");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 		}
 	}
+	//*******************************IPO-10911 Functions************************************************
+	//**************************************************************************************************
+	//*******************************IPO-10911 Functions************************************************
+	public void logIntoGmailWithAttachment (String url, String username, String passowrd) throws Exception {
+		Robot robot = new Robot();
+		driver.get(url);
+		driver.findElement(By.id("sign_in_username")).sendKeys(username);
+		driver.findElement(By.id("sign_in_password")).sendKeys(passowrd);
+		driver.findElement(By.xpath("//input[@value='Log In']")).click();
+		try {
+			WebDriverWait wait = new WebDriverWait (driver, 5);
+			ele = By.xpath("//div[text()='zabid@acumensolutions.com']");
+			wait.until(ExpectedConditions.visibilityOfElementLocated(ele));
+			driver.findElement(By.xpath("//span[text()='Continue']")).click();
+		} catch (Exception e) {
+			
+		}
+		ele = By.xpath("//div[text()='Compose']");
+		fluentWaitForElementVisibility();
+		driver.findElement(ele).click();
+		ele = By.xpath("//textarea[@name='to']");
+		fluentWaitForElementVisibility();
+		driver.findElement(ele).click();
+		driver.findElement(ele).sendKeys(emailLink);
+		robot.keyPress(KeyEvent.VK_TAB);
+		Utils.sleep(1);
+		robot.keyRelease(KeyEvent.VK_TAB);
+		Utils.sleep(1);
+		randomDateTime();
+		driver.findElement(By.xpath("//input[@name='subjectbox']")).sendKeys(subjectLine);
+		robot.keyPress(KeyEvent.VK_TAB);
+		Utils.sleep(1);
+		robot.keyRelease(KeyEvent.VK_TAB);
+		Utils.sleep(1);
+		driver.findElement(By.xpath("//div[contains(@class,'Am Al editable')]")).click();
+		driver.findElement(By.xpath("//div[contains(@class,'Am Al editable')]")).sendKeys(subjectLine);
+		Utils.sleep(1);
+		attach_file_and_send(Constants.privacy_pia_attachment_url, false);
+		Utils.sleep(4);
+		driver.findElement(By.xpath("//div[text()='Send']")).click();
+		Utils.sleep(4);
+		ele = By.xpath("//span[text()='Message sent.']");
+		fluentWaitForElementVisibility();
+		driver.close();
+		driver.quit();
+	}
+	private void attach_file_and_send(String attachmentPath, boolean pressTab) throws Exception {
+		try {
+		driver.findElement(By.cssSelector("[command='Files']")).click();
+		} catch (Exception e) {
+			
+		}
+
+		StringSelection s = new StringSelection(attachmentPath);
+		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(s, null);
+		Robot robot = new Robot();
+
+		Utils.sleep(2);
+		if (Constants.isWindows()) {
+			// For windows
+			robot.keyPress(KeyEvent.VK_ENTER);
+			robot.keyRelease(KeyEvent.VK_ENTER);
+			robot.keyPress(KeyEvent.VK_CONTROL);
+			robot.keyPress(KeyEvent.VK_V);
+			robot.keyRelease(KeyEvent.VK_CONTROL);
+			robot.keyRelease(KeyEvent.VK_V);
+
+			Utils.sleep(3);
+			robot.keyPress(KeyEvent.VK_ENTER);
+			robot.keyRelease(KeyEvent.VK_ENTER);
+		} else {
+			// Cmd + Tab is needed since it launches a Java app and the browser looses focus
+			Utils.sleep(5);
+			if (pressTab) {
+				robot.keyPress(KeyEvent.VK_META);
+				robot.keyPress(KeyEvent.VK_TAB);
+				robot.keyRelease(KeyEvent.VK_META);
+				robot.keyRelease(KeyEvent.VK_TAB);
+			}
+
+			robot.keyPress(KeyEvent.VK_META);
+			Utils.sleep(1);
+			robot.keyPress(KeyEvent.VK_SHIFT);
+			Utils.sleep(1);
+			robot.keyPress(KeyEvent.VK_G);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_META);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_SHIFT);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_G);
+			Utils.sleep(1);
+
+			// Paste the clipboard value
+			robot.keyPress(KeyEvent.VK_META);
+			Utils.sleep(1);
+			robot.keyPress(KeyEvent.VK_V);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_META);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_V);
+			Utils.sleep(1);
+
+			// Press Enter key to close the Goto window and Upload window
+			robot.keyPress(KeyEvent.VK_ENTER);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_ENTER);
+			robot.delay(500);
+			robot.keyPress(KeyEvent.VK_ENTER);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_ENTER);
+			Utils.sleep(1);
+		}
+
+		// switch back
+		driver.switchTo().activeElement();
+
+		Utils.sleep(4);
+	}
+	public void createNewIpoResponseFor10911() {
+		WebDriverWait wait = new WebDriverWait (driver, 300);
+		fetchCorrectIframe(By.xpath("//a[@title='Details']/span/span[1]"));
+		driver.findElement(By.xpath("//a[@title='Feed']/span/span[1]")).click();
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//span[text()='New Response']")));
+		driver.findElement(By.xpath("//span[text()='New Response']")).click();
+		Utils.sleep(2);
+		//driver.switchTo().defaultContent();
+		wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(driver.findElement(By.xpath(".//iframe[@title='ResponseBuilder']"))));
+		element = driver.findElements(By.xpath("//div[contains(text(),'Response Recipients')]")).get(0);
+		scrollingFunction();
+		driver.findElements(By.xpath("//input[@maxlength='255']")).get(0).sendKeys("IPO");
+		driver.findElement(By.xpath("//button[@title='Search']")).click();
+		Utils.sleep(2);
+		wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//span[text()='Select Item 1']/preceding-sibling::span"))));
+		driver.findElement(By.xpath("//span[text()='Select Item 1']/preceding-sibling::span")).click();
+		Utils.sleep(1);
+		driver.findElement(By.xpath("//span[text()='Select Item 2']/preceding-sibling::span")).click();
+		Utils.sleep(1);
+		selectDropdownListValue("CC", driver.findElement(By.xpath("//tr[2]/td[4]/div/select")));
+		Utils.sleep(1);
+		selectDropdownListValue("BCC", driver.findElement(By.xpath("//tr[3]/td[4]/div/select")));
+		Utils.sleep(1);
+		element = driver.findElement(By.xpath(".//span[text()='Select Folder']"));
+		scrollingFunction();
+		element = driver.findElement(By.xpath(".//option[contains(text(),'IPO Greetings')]"));
+		element.click();
+		Utils.sleep(1);
+		driver.findElement(By.xpath("//span[contains(text(),'Available Templates')]/parent::div/following-sibling::div[1]/select/option[contains(text(),'IPO Greetings')]")).click();
+		Utils.sleep(1);
+		driver.findElement(By.xpath("//button[@title='Select to move the template to the selected box. Information about the template will appear below.']")).click();
+		//Select 2nd one
+		element = driver.findElement(By.xpath(".//option[contains(text(),'IPO I-829')]"));
+		Actions actObj = new Actions(driver);
+		actObj.moveToElement(driver.findElement(By.xpath(".//option[contains(text(),'IPO I-829')]"))).doubleClick().build().perform();
+		Utils.sleep(1);
+		driver.findElement(By.xpath(".//option[contains(text(),'ASC Appointment Language (due to C3 Conversion)')]")).click();
+		Utils.sleep(1);
+		driver.findElement(By.xpath("//button[@title='Select to move the template to the selected box. Information about the template will appear below.']")).click();
+		//Select 3rd one
+		element = driver.findElement(By.xpath(".//option[contains(text(),'IPO Closings')]/preceding::option[1]"));
+		scrollingFunction();
+		Utils.sleep(2);
+		element = driver.findElement(By.xpath(".//option[contains(text(),'IPO Closings')]"));
+		//scrollingFunction();
+		actObj.moveToElement(element).doubleClick().build().perform();
+		Utils.sleep(1);
+		element = driver.findElement(By.xpath("//span[contains(text(),'Available Templates')]"));
+		scrollingFunction();
+		Utils.sleep(1);
+		element = driver.findElement(By.xpath("//span[contains(text(),'Available Templates')]/parent::div/following-sibling::div[1]/select/option[contains(text(),'IPO Closing')]"));
+		Utils.sleep(1);
+		element.click();
+		driver.findElement(By.xpath("//button[@title='Select to move the template to the selected box. Information about the template will appear below.']")).click();
+		Utils.sleep(2);
+		element = driver.findElement(By.xpath("//button[contains(text(),'Generate Preview')]"));
+		scrollingFunction();
+		Utils.sleep(1);
+		element.click();
+		Utils.sleep(2);
+		element = driver.findElement(By.xpath("//button[contains(text(),'Submit')]"));
+		scrollingFunction();
+		element = driver.findElement(By.xpath("//button[contains(text(),'Save Draft')]"));
+		Utils.sleep(2);
+		element.click();
+		ele = By.xpath("//div[contains(text(),'Your draft response has been saved successfully.')]");
+		fluentWaitForElementVisibility();
+		element = driver.findElement(By.xpath("//button[contains(text(),'Save Draft')]"));
+		scrollingFunction();
+		Utils.sleep(2);
+		driver.findElement(By.xpath("//button[contains(text(),'Load Original Attachments')]")).click();
+		Utils.sleep(2);
+		ele = By.xpath("//div[contains(text(),'File uploaded successfully')]");
+		fluentWaitForElementVisibility();
+		element = driver.findElement(By.xpath("//button[contains(text(),'Load Original Attachments')]"));
+		scrollingFunction();
+		fileNm = driver.findElement(By.xpath("//button[@title='Delete Attachment']/preceding-sibling::button")).getAttribute("title");
+		Utils.sleep(1);
+		System.out.println("File Name"+fileNm);
+		driver.findElement(By.xpath("//button[contains(text(),'Submit')]")).click();
+		Utils.sleep(3);
+		wait.until(ExpectedConditions.alertIsPresent());
+		driver.switchTo().alert().accept();
+		ele = By.xpath("//div[contains(text(),'Your response has been successfully submitted and is now locked.')]");
+		fluentWaitForElementVisibility();
+		driver.findElement(By.xpath("//a[text()='View Response']")).click();
+		Utils.sleep(2);
+		driver.switchTo().defaultContent();
+		driver.switchTo().defaultContent();
+		fetchCorrectIframe(By.xpath("//h3[text()='Files']"));
+		element = driver.findElement(By.xpath("//a[text()='"+fileNm+"']/parent::*"));
+		highlightElement();
+		driver.switchTo().defaultContent();
+		driver.switchTo().defaultContent();
+		Utils.sleep(1);
+		driver.findElement(By.xpath("//div[@id='navigatortab']/div[2]/div[@class='x-tab-tabmenu-right']")).click();
+		Utils.sleep(1);
+		((JavascriptExecutor)driver).executeScript("arguments[0].click();", 
+				driver.findElement(By.xpath("//a/span[text()='Close all primary tabs']")));
+		Utils.sleep(4);
+		wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(driver.findElement(By.xpath("//div[@id='navigatortab']/div[3]/descendant::iframe[not(starts-with(@src,'https://uscis--uatg.my.salesforce.com'))]"))));
+		driver.findElement(By.xpath("//table[@class='x-grid3-row-table']/tbody/descendant::a[text()='"+newSINo+"']")).click();
+		driver.switchTo().defaultContent();
+	}
+	//call the response check functions
+	public void validateCCBCCEmail() {
+		fetchCorrectIframe(By.xpath("//a[@title='Details']/span/span[1]"));
+		driver.findElement(By.xpath("//a[@title='Details']/span/span[1]")).click();
+		Utils.sleep(1);
+		element = driver.findElement(By.xpath("//img[@title='Response']/following::*[text()='Responses']"));
+		scrollingFunction();
+		Utils.sleep(2);
+		element = driver.findElement(By.xpath("//tr[2]/td[text()='Sent']"));
+		highlightElement();
+		element = driver.findElement(By.xpath("//input[@value='Send an Email']/parent::*"));
+		scrollingFunction();
+		Utils.sleep(2);
+		driver.findElement(By.xpath("//tr[2]/th[text()='Sent']/following-sibling::td[2]/a")).click();
+		driver.switchTo().defaultContent();
+		fetchCorrectIframe(By.xpath("//h3[text()='Address Information']/parent::*"));
+		element = driver.findElement(By.xpath("//td[text()='To Address']/parent::tr"));
+		highlightElement();
+		element = driver.findElement(By.xpath("//td[text()='CC Address']/parent::tr"));
+		highlightElement();
+		element = driver.findElement(By.xpath("//td[text()='BCC Address']/parent::tr"));
+		highlightElement();
+		driver.switchTo().defaultContent();
+	}
+	//**************************************************************************************************
 	/*
 	 * Below main function is for testing purpose only....
 	 */
-	public static void main(String[] args) throws AWTException {
+	public static void main(String[] args) throws Exception {
 		Email_Auto_Approval_QC_5_Percent_E2E gt = new Email_Auto_Approval_QC_5_Percent_E2E();
 		gt.launch();
-		//gt.searchHDISOVSCitems("HD ISO VSC");
-		//gt.logInAsInternalUser("HD ISO VSC");
-		//newSINo = "04788093";
+		/*gt.fetchEmailLink("ipoemailtocaseqa");
+		gt.logIntoGmailWithAttachment("https://acumensolutions-com.clearlogin.com/login","zabid","Acumen1234");
+		gt.launch();
+		gt.searchHDISOVSCitems("IPO Super User");
+		gt.logInAsInternalUser("IPO Super User");*/
+		newSINo = "07198481";
+		//gt.ipoSuperUserEmailToQ("IPO Email To Case Q");
+		//gt.currentUserLogOut();
+		gt.searchHDISOVSCitems("IPO CSR");
+		gt.logInAsInternalUser("IPO CSR");
+		//gt.duplicateSIandOpenSI();
+		Utils.sleep(4);
+		gt.createNewIpoResponseFor10911();
+		gt.validateCCBCCEmail();
 		//emailLink = "cishdqa@2k7m4p7no7eke6gewwvfqe38ioy6oah93ilae2z792qb0dt7fy.r-1owyeam.cs32.apex.sandbox.salesforce.com";
-		gt.logIntoGmailForReplyValidation("https://acumensolutions-com.clearlogin.com/login","zabid","Acumen123");
+		//gt.logIntoGmailForReplyValidation("https://acumensolutions-com.clearlogin.com/login","zabid","Acumen123");
 		//gt.verifyProfile();
 		//gt.relatedServiceItems();
 		/*Then Email auto approval process Replying to the triggered email "https://acumensolutions-com.clearlogin.com/login" with user id "zabid"

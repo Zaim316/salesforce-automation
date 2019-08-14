@@ -1,5 +1,6 @@
 package com.salesforcetest.test;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,19 +62,19 @@ private WebDriver driver;
 		ims.setTestReporter(testReporter);
 	}
 	@Test(testName = "Scenario_1_1", description = "Scenario 1.1", priority=1)
-	public void ISO11790_IncidentManagementScenario_Test_S1_SI_Creation() throws InterruptedException {
+	public void ISO11790_IncidentManagementScenario_Test_S1_SI_Creation() throws InterruptedException, IOException {
 		ims.createNewIncidentSI();
 	}
 	@Test(testName = "Scenario_1_2", description = "Scenario 1.2", priority=2)
-	public void ISO11790_IncidentManagementScenario_Test_S2_Type_Field() throws InterruptedException {
+	public void ISO11790_IncidentManagementScenario_Test_S2_Type_Field() throws InterruptedException, IOException {
 		ims.changeTheTypeField();
 	}
 	@Test(testName = "Scenario_1_3", description = "Scenario 1.3", priority=3)
-	public void ISO11790_IncidentManagementScenario_Test_S3_Blank_Attachment() throws InterruptedException {
+	public void ISO11790_IncidentManagementScenario_Test_S3_Blank_Attachment() throws InterruptedException, IOException {
 		ims.blankAttachmentValidation();
 	}
 	@Test(testName = "Scenario_1_4", description = "Scenario 1.4", priority=4)
-	public void ISO11790_IncidentManagementScenario_Test_S4_Send_Mail() throws InterruptedException {
+	public void ISO11790_IncidentManagementScenario_Test_S4_Send_Mail() throws InterruptedException, IOException {
 		ims.sendAMail();
 	}
 	@AfterMethod

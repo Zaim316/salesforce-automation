@@ -46,6 +46,11 @@
             <class name="com.salesforcetest.test.CaseTeamMemberTest"></class>
         </classes>
     </test>
+    <test name="ISO_11790_Remove_Functionality" group-by-instances="true">
+        <classes>
+            <class name="com.salesforcetest.test.ISO_11790_Remove_Functionality"></class>
+        </classes>
+    </test>
     <test name="ReportingTest" group-by-instances="true">
         <classes>
             <class name="com.salesforcetest.test.ReportingTest"></class>
