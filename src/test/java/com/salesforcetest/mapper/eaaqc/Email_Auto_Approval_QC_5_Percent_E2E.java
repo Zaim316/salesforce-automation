@@ -2,6 +2,8 @@ package com.salesforcetest.mapper.eaaqc;
 
 import java.awt.AWTException;
 import java.awt.Robot;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,7 +46,7 @@ import cucumber.api.java.en.When;
 public class Email_Auto_Approval_QC_5_Percent_E2E {
 	public static WebDriver driver;
 	private WebElement element;
-	public static String newSINo, emailLink, subjectLine, screenShotPath;
+	public static String newSINo, emailLink, subjectLine, screenShotPath, fileNm;
 	private By ele;
 	String workingDir = System.getProperty("user.dir");
 	
@@ -57,7 +59,7 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 	 */
 	@Given("^Email auto approval process Registered User is logged in with \"(.*)\"$")
 	public void init(String user) throws IOException {
-		extent = new ExtentReports(workingDir+"\\test-report\\EmailSIAutoApprovalScenarioWithHD"+randomDateTime1()+".html", true);
+		extent = new ExtentReports(workingDir+"\\test-report\\EmailSIAutoApprovalScenarioWithHDISOVSC"+randomDateTime1()+".html", true);
 		testReporter = extent.startTest("HD VSC user Service Item creation from email and Auto approval");
 		try {
 			launch();
@@ -144,7 +146,7 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 		}
 	}
 	@Then("^Email auto approval process set QC Percentage to \"(.*)\"$")
-	public void Set_QC_Percentage(String val) throws IOException {
+	public void Set_QC_Percentage(String val) throws IOException, AWTException {
 		try {
 			setPercentage(val);
 			testReporter.log(LogStatus.PASS, "Set percentage to "+val+" successful.");
@@ -190,7 +192,7 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 		}
 	}
 	@And("^To edit service item Provide all new mandatory data$")
-	public void create_new_service_item(DataTable dt) throws IOException {
+	public void create_new_service_item(DataTable dt) throws IOException, AWTException {
 		//need to code as per feature file.
 		List<Map<String, String>> list = dt.asMaps(String.class, String.class);
 		String receiptNumber = list.get(0).get("Receipt No");//new
@@ -568,7 +570,7 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 		ele = By.xpath(".//input[@title='QC Percentage for HD ISO VSC']");
 		fluentWaitForElementVisibility();
 		Utils.sleep(2);
-		driver.findElement(By.xpath(".//table[@title='ISO Users']/tbody/tr[2]/td[1]/input[@type='checkbox']")).click();
+		driver.findElement(By.xpath(".//table[@title='ISO Users']/tbody/tr[1]/td[1]/input[@type='checkbox']")).click();
 		Utils.sleep(1);
 		driver.findElement(ele).clear();
 		driver.findElement(ele).sendKeys(percentageValue);
@@ -812,10 +814,17 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 				driver.findElement(By.xpath("//input[@value='Assign a Service Item']")).click();
 				wait.until(ExpectedConditions.alertIsPresent());
 				Utils.sleep(1);
+				if(driver.switchTo().alert().getText().contains("The service item could not be assigned.Update failed.")) {
+					testReporter.log(LogStatus.FAIL, "Allert message exception. message: "+driver.switchTo().alert().getText());
+					driver.switchTo().alert().accept();
+					getResult();
+					Assert.assertTrue(false);
+					break;
+				}
 				robot.keyPress(KeyEvent.VK_ENTER);
 				Utils.sleep(1);
 				robot.keyRelease(KeyEvent.VK_ENTER);
-				Utils.sleep(3);
+				Utils.sleep(2);
 				element = driver.findElement(By.xpath("//table[@class='x-grid3-row-table']/tbody/descendant::a[text()='"+newSINo+"']"));
 				highlightElement();
 				driver.findElement(By.xpath("//table[@class='x-grid3-row-table']/tbody/descendant::a[text()='"+newSINo+"']")).click();
@@ -856,6 +865,11 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 			}
 		}
 		wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(driver.findElement(By.xpath("//frame[@id='resultsFrame']"))));
+		/*driver.findElement(By.xpath("//label[text()='Search']/following-sibling::input[@maxlength='80']")).sendKeys(contactNm);
+		Utils.sleep(1);
+		driver.findElement(By.xpath("//label[text()='Search']/following-sibling::input[@title='Go!']")).click();
+		Utils.sleep(2);*/
+		Utils.sleep(2);
 		driver.findElement(By.xpath(".//*[@id='Contact_body']/table/tbody/descendant::a[text()='"+contactNm+"']")).click();
 		Utils.sleep(2);
 		driver.switchTo().window(winHandleBefore);
@@ -907,8 +921,13 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 	 * This function is used to select the given sender type from dropdown list.
 	 */
 	public void selectSenderType(String senderType) { //String senderType
-		selectDropdownListValue(senderType, driver.findElement(By.xpath("//div[@class='pbSubsection'][1]/table[@class='detailList']/tbody/tr[2]/td[2]/span/select")));
-		Utils.sleep(2);
+		try {
+			selectDropdownListValue(senderType, driver.findElement(By.xpath("//div[@class='pbSubsection'][1]/table[@class='detailList']/tbody/tr[2]/td[2]/span/select")));
+		} catch (Exception e) {
+			fetchCorrectIframe(By.xpath("//div[@class='pbSubsection'][1]/table[@class='detailList']/tbody/tr[3]/td[2]"));
+			selectDropdownListValue(senderType, driver.findElement(By.xpath("//div[@class='pbSubsection'][1]/table[@class='detailList']/tbody/tr[2]/td[2]/span/select")));
+		}
+		Utils.sleep(1);
 	}
 	/*
 	 * This function is used to set random subject and description and form type from dropdown list.
@@ -920,7 +939,7 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 		driver.findElement(By.xpath("//div[@class='pbSubsection'][2]/table[@class='detailList']/tbody/tr[1]/td[2]/div/input")).sendKeys("Test Subject_"+randNumber.nextInt(10000));
 		driver.findElement(By.xpath("//div[@class='pbSubsection'][2]/table[@class='detailList']/tbody/tr[2]/td[2]/textarea")).sendKeys("Test Description_"+randNumber.nextInt(10000));
 		selectRandomDropdownListValue(driver.findElement(By.xpath("//div[@class='pbSubsection'][2]/table[@class='detailList']/tbody/tr[2]/td[4]/div/span/span/select")));
-		Utils.sleep(2);
+		Utils.sleep(1);
 	}
 	/*
 	 * This function is used to provide for a specified subject line and description to the service item.
@@ -932,7 +951,7 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 		scrollingFunction();
 		driver.findElement(By.xpath("//div[@class='pbSubsection'][2]/table[@class='detailList']/tbody/tr[1]/td[2]/div/input")).sendKeys(subject);
 		driver.findElement(By.xpath("//div[@class='pbSubsection'][2]/table[@class='detailList']/tbody/tr[2]/td[2]/textarea")).sendKeys(description);
-		Utils.sleep(2);
+		Utils.sleep(1);
 	}
 	/*
 	 * This function is used to select the form number and form type from dropdown list.
@@ -942,9 +961,14 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 	public void setformNumberAndFormType(String formNumber, String formType) {
 		element = driver.findElement(By.xpath("//*[contains(text(),'How Can We Help You')]"));
 		scrollingFunction();
-		selectDropdownListValue(formNumber, driver.findElement(By.xpath("//div[@class='pbSubsection'][2]/table[@class='detailList']/tbody/tr[1]/td[4]/div/span/select")));
-		selectDropdownListValue(formType, driver.findElement(By.xpath("//div[@class='pbSubsection'][2]/table[@class='detailList']/tbody/tr[2]/td[4]/div/span/span/select")));
-		Utils.sleep(2);
+		try {
+		selectDropdownListValue(formNumber, driver.findElement(By.xpath("//div[@class='pbSubsection'][2]/table[@class='detailList']/tbody/tr[1]/td[4]/span/select")));
+		selectDropdownListValue(formType, driver.findElement(By.xpath("//div[@class='pbSubsection'][2]/table[@class='detailList']/tbody/tr[2]/td[4]/span/span/select")));
+		} catch (Exception e) {
+			selectDropdownListValue(formNumber, driver.findElement(By.xpath("//div[@class='pbSubsection'][2]/table[@class='detailList']/tbody/tr[1]/td[4]/div/span/select")));
+			selectDropdownListValue(formType, driver.findElement(By.xpath("//div[@class='pbSubsection'][2]/table[@class='detailList']/tbody/tr[2]/td[4]/div/span/span/select")));
+		}
+		Utils.sleep(1);
 	}
 	/*
 	 * This function is used to select random Category and kind from available dropdown list value. 
@@ -956,7 +980,7 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 		selectRandomDropdownListValue(driver.findElement(By.xpath("//div[@class='pbSubsection'][3]/table[@class='detailList']/tbody/tr[1]/td[2]/span/select")));
 		selectRandomDropdownListValue(driver.findElement(By.xpath("//div[@class='pbSubsection'][3]/table[@class='detailList']/tbody/tr[2]/td[2]/span/span/select")));
 		driver.findElement(By.xpath("//div[@class='pbSubsection'][3]/table[@class='detailList']/tbody/tr[1]/td[4]/textarea")).sendKeys("Auto Generated Comments_"+randNumber.nextInt(10000));
-		Utils.sleep(2);
+		Utils.sleep(1);
 	}
 	/*
 	 * This function is used to select category, kind and comments by taking input.
@@ -970,7 +994,7 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 		selectDropdownListValue(category,driver.findElement(By.xpath("//div[@class='pbSubsection'][3]/table[@class='detailList']/tbody/tr[1]/td[2]/span/select")));
 		selectDropdownListValue(kind,driver.findElement(By.xpath("//div[@class='pbSubsection'][3]/table[@class='detailList']/tbody/tr[2]/td[2]/span/span/select")));
 		driver.findElement(By.xpath("//div[@class='pbSubsection'][3]/table[@class='detailList']/tbody/tr[1]/td[4]/textarea")).sendKeys(comments);
-		Utils.sleep(2);
+		Utils.sleep(1);
 	}
 	/*
 	 * This function is used to select Service Item IO origin from the dropdown list value.
@@ -1047,7 +1071,7 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 			ele = By.xpath(".//span[@class='tabText' and text()='New Response']");
 			fluentWaitForElementVisibility();
 			driver.navigate().refresh();
-			Utils.sleep(4);
+			Utils.sleep(2);
 			ele = By.xpath(".//span[@class='tabText' and text()='New Response']");
 			fluentWaitForElementVisibility();
 			driver.findElement(ele).click();
@@ -1431,7 +1455,7 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 				element = driver.findElement(By.xpath(".//span[text()='"+subjectLine+"']/parent::a/parent::div/parent::td/preceding-sibling::td[2]/div/a"));
 				highlightElement();
 				newSINo = driver.findElement(By.xpath(".//span[text()='"+subjectLine+"']/parent::a/parent::div/parent::td/preceding-sibling::td[2]/div/a")).getText();
-				Utils.sleep(4);
+				Utils.sleep(1);
 				driver.switchTo().defaultContent();
 	}
 	/*
@@ -1707,6 +1731,8 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 		Utils.sleep(20);//Waiting for email child item creation to be completed.
 		for(int count =0;count<2;count++) {
 		try {
+			for (int loop = 0;loop<8;loop++) {
+			try {
 			driver.navigate().refresh();
 			Utils.sleep(4);
 			ele = By.xpath(".//span[@class='tabText' and text()='New Response']");//New Response
@@ -1723,10 +1749,15 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 			element = driver.findElement(By.xpath("//h3[text()='Related Service Items']"));
 			scrollingFunction();
 			Utils.sleep(2);
-			element = driver.findElement(By.xpath("//th[text()='Service Item']/parent::tr/following-sibling::tr[1]/th/a"));
-			highlightElement();
-			testReporter.log(LogStatus.PASS, "Child service item number which is created from mail is :"+element.getText());
-			element.click();
+				element = driver.findElement(By.xpath("//th[text()='Service Item']/parent::tr/following-sibling::tr[1]/th/a"));
+				highlightElement();
+				testReporter.log(LogStatus.PASS, "Child service item number which is created from mail is :"+element.getText());
+				element.click();
+				break;
+				} catch (Exception e) {
+					Utils.sleep(120);	
+				}
+			}
 			driver.switchTo().defaultContent();
 			Utils.sleep(2);
 			fetchCorrectIframe(By.xpath("//td[text()='Parent Service Item']/following-sibling::td[1]/div/a[text()='"+newSINo+"']"));
@@ -1743,22 +1774,544 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 		}
 		}
 		if (flag == "Failed") {
-		testReporter.log(LogStatus.FAIL, "Opened the child service item failure(Child item did not get created) or child SI of parent SI "+newSINo+" is not present in the page.");
-		screenShotPath = GetScreenShot.capture(driver);
-		testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
+			testReporter.log(LogStatus.FAIL, "Opened the child service item failure(Child item did not get created) or child SI of parent SI "+newSINo+" is not present in the page.");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 		}
 	}
+	//*******************************IPO-10911 Functions************************************************
+	@Given("^IPO_10911 Email auto approval process Registered User is logged in with \"(.*)\"$")
+	public void init_For_IPO_10911(String user) throws IOException {
+		extent = new ExtentReports(workingDir+"\\test-report\\IPO_10911_Scenario_Validation"+randomDateTime1()+".html", true);
+		testReporter = extent.startTest("IPO 10911 scenario Email CC BCC and load email attachment validation");
+		try {
+			launch();
+			testReporter.log(LogStatus.PASS, "User logs in successfully");
+		} catch (Exception e) {
+			testReporter.log(LogStatus.FAIL, "User logs in successfully");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
+			getResult();
+			Assert.assertTrue(false);
+			e.printStackTrace();
+		}
+	}
+	@Then("^IPO_10911 Email auto approval process Verifying the current logged in user profile and switches to classic view if it is in lightning exp$")
+	public void verify_Logged_In_User_Profile_For_IPO_10911() throws IOException {
+		try {
+			switchToClassicView();
+			verifyProfile();
+			testReporter.log(LogStatus.PASS, "Verifying the current logged in user profile and switches to classic view if it is in lightning exp view:");
+		} catch (Exception e) {
+			testReporter.log(LogStatus.FAIL, "Verifying the current logged in user profile:");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
+			getResult();
+			Assert.assertTrue(false);
+			e.printStackTrace();
+		}
+	}
+	@Then("^IPO_10911 Email auto approval process Fetching email EmailRelayRoutingHandler from by navigating to email services area of row \"(.*)\"$")
+	public void Fetch_Email_From_Email_Services_For_IPO_10911(String rowNo) throws IOException {
+		try {
+			fetchEmailLink(rowNo);
+			testReporter.log(LogStatus.PASS, "Fetching email from by navigating to email services EmailRelayRoutingHandler area");
+		} catch (Exception e) {
+			testReporter.log(LogStatus.FAIL, "Fetching email from by navigating to email services EmailRelayRoutingHandler area");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
+			getResult();
+			Assert.assertTrue(false);
+			e.printStackTrace();
+		}
+	}
+	@Then("^IPO_10911 Email auto approval process Logging into email \"(.*)\" with user id \"(.*)\"$")
+	public void Log_Into_Email_For_IPO_10911(String url, String username) throws IOException {
+		try {
+			logIntoGmailWithAttachment(url, username, Constants.email_password);
+			launch();
+			testReporter.log(LogStatus.PASS, "Logging into email to send email to create a Service Item");
+		} catch (Exception e) {
+			testReporter.log(LogStatus.FAIL, "Logging into email to send email to create a Service Item");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
+			getResult();
+			Assert.assertTrue(false);
+			e.printStackTrace();
+		}
+	}
+	@When("^IPO_10911 Email auto approval process Search for required Internal User \"(.*)\"$")
+	public void search_For_Internal_User_For_IPO_10911(String user) throws IOException {
+		try {
+			searchHDISOVSCitems(user);
+			testReporter.log(LogStatus.PASS, "Search with required User");
+		} catch (Exception e) {
+			testReporter.log(LogStatus.FAIL, "Search with required User");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
+			getResult();
+			Assert.assertTrue(false);
+			e.printStackTrace();
+		}
+	}
+	@Then("^IPO_10911 Email auto approval process Logging in as Internal user and verifying \"(.*)\"$")
+	public void logging_In_As_Internal_User_And_Verify_Profile_For_IPO_10911(String user) throws IOException {
+		try {
+			logInAsInternalUser(user);
+			testReporter.log(LogStatus.PASS, "Verify log in as Internal User");
+		} catch (Exception e) {
+			testReporter.log(LogStatus.FAIL, "Verify log in as Internal User");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
+			getResult();
+			Assert.assertTrue(false);
+			e.printStackTrace();
+		}
+	}
+	@Then("^IPO_10911 Email auto approval process set QC Percentage to \"(.*)\"$")
+	public void Set_QC_Percentage_For_IPO_10911(String val) throws IOException {
+		try {
+			setPercentageForIpo(val);
+			testReporter.log(LogStatus.PASS, "Set percentage to "+val+" successful.");
+		} catch (Exception e) {
+			testReporter.log(LogStatus.FAIL, "Set percentage to "+val+" successful.");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
+			getResult();
+			Assert.assertTrue(false);
+			e.printStackTrace();
+		}
+	}
+	@Then("^IPO_10911 Email auto approval process Fetch the Service item number which is created through Email$")
+	public void Fetch_The_SI_Number_For_IPO_10911() throws IOException {
+		try {
+			ipoSuperUserEmailToQ("IPO Email To Case Q");
+			currentUserLogOut();
+			testReporter.log(LogStatus.PASS, "Fetch the Service Item number whose subject line is "+subjectLine+" and SI number "+newSINo);
+		} catch (Exception e) {
+			testReporter.log(LogStatus.FAIL, "Fetch the Service Item number whose subject line is "+subjectLine+" and SI number "+newSINo);
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
+			getResult();
+			Assert.assertTrue(false);
+			e.printStackTrace();
+		}
+	}
+	@Then("^IPO_10911 Email auto approval process Log Into as IPO Normal user and mark openend items as duplicate and Assign a new item with user \"(.*)\"$")
+	public void Fetch_The_SI_Number_For_IPO_10911(String user) throws IOException {
+		try {
+			searchHDISOVSCitems(user);
+			logInAsInternalUser(user);
+			duplicateSIandOpenSI();
+			editSIandSave();
+			testReporter.log(LogStatus.PASS, "Marking all open items as duplicate and assign new SI and Open the item in Edit mode with "+user+" user.");
+		} catch (Exception e) {
+			testReporter.log(LogStatus.FAIL, "Marking all open items as duplicate and assign new SI and Open the item in Edit mode with "+user+" user.");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
+			getResult();
+			Assert.assertTrue(false);
+			e.printStackTrace();
+		}
+	}
+	@And("^IPO_10911 To edit service item Provide all new mandatory data$")
+	public void create_new_service_item_For_IPO_10911(DataTable dt) throws IOException {
+		//need to code as per feature file.
+		List<Map<String, String>> list = dt.asMaps(String.class, String.class);
+		String receiptNumber = list.get(0).get("Receipt No");//new
+		String contactNm = list.get(0).get("Contact");//new
+		String email = list.get(0).get("Email");
+		String senderType = list.get(0).get("Sender Type");
+		String formNo = list.get(0).get("Form No");//new
+		String formType = list.get(0).get("Form Type");
+		String category = list.get(0).get("Issue");
+		String kind = list.get(0).get("Action");
+		String comm = list.get(0).get("Comments");
+		String io = list.get(0).get("Item Origin");
+		String dateTime = list.get(0).get("DateTime");
+		String responseComments = list.get(0).get("Response Comments");//new
+		try {
+			selectSenderType(senderType);
+			testReporter.log(LogStatus.PASS, "Give Sender Type Name : "+senderType);
+		} catch (Exception e) {
+			testReporter.log(LogStatus.FAIL, "Give Sender Type Name : "+senderType);
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
+			getResult();
+			Assert.assertTrue(false);
+			e.printStackTrace();
+		}
+		try {
+			setformNumberAndFormType(formNo, formType);
+			testReporter.log(LogStatus.PASS, "Select FormNumber and Form Type respectively: "+formNo+" ,"+formType);
+		} catch (Exception e) {
+			testReporter.log(LogStatus.FAIL, "Select FormNumber and Form Type respectively: "+formNo+" ,"+formType);
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
+			getResult();
+			Assert.assertTrue(false);
+			e.printStackTrace();
+		}
+		try {
+			issueAndAction(category, kind, comm);
+			testReporter.log(LogStatus.PASS, "Give Issue, Action Name and Comments respectively :"+category+" ,"+kind+" ,"+comm);
+		} catch (Exception e) {
+			testReporter.log(LogStatus.FAIL, "Give Issue, Action Name and Comments respectively :"+category+" ,"+kind+" ,"+comm);
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
+			getResult();
+			Assert.assertTrue(false);
+			e.printStackTrace();
+		}
+		try {
+			selectSIOriginForIpo(io);
+			testReporter.log(LogStatus.PASS, "Give Service Item Origin :"+io);
+		} catch (Exception e) {
+			testReporter.log(LogStatus.FAIL, "Give Service Item Origin :"+io);
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
+			getResult();
+			Assert.assertTrue(false);
+			e.printStackTrace();
+		}
+		try {
+			setResponseCommentsIpo(responseComments);
+			testReporter.log(LogStatus.PASS, "Provide response comments : "+responseComments);
+		} catch (Exception e) {
+			testReporter.log(LogStatus.FAIL, "Provide response comments : "+responseComments);
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
+			getResult();
+			Assert.assertTrue(false);
+			e.printStackTrace();
+		}
+		try {
+			clickOnSaveSI();
+			testReporter.log(LogStatus.PASS, "Saving this new service item data");
+		} catch (Exception e) {
+			testReporter.log(LogStatus.FAIL, "Saving this new service item data");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
+			getResult();
+			Assert.assertTrue(false);
+			e.printStackTrace();
+		}
+	}
+	
+	@Then("^IPO_10911 create new service item response with multiple contacts and validating email attachment is appearing in the Load Attachment section$")
+	public void Validate_Create_New_Response_with_attachment_For_IPO_10911() throws IOException {
+		try {
+			createNewIpoResponseFor10911();
+			testReporter.log(LogStatus.PASS, "create new service item response with multiple contacts and validating email attachment is appearing in the Load Attachment section");
+		} catch (Exception e) {
+			testReporter.log(LogStatus.FAIL, "create new service item response with multiple contacts and validating email attachment is appearing in the Load Attachment section");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
+			getResult();
+			Assert.assertTrue(false);
+			e.printStackTrace();
+		}
+	}
+	@Then("^IPO_10911 Validate cc BCC email is appearing in the out bound mail section and check the response status is changed to Sent$")
+	public void Validate_CC_BCC_Mail_For_IPO_10911() throws IOException {
+		try {
+			validateCCBCCEmail();
+			testReporter.log(LogStatus.PASS, "Validate cc BCC email is appearing in the out bound mail section and check the response status is changed to Sent");
+		} catch (Exception e) {
+			testReporter.log(LogStatus.FAIL, "Validate cc BCC email is appearing in the out bound mail section and check the response status is changed to Sent");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
+			getResult();
+			Assert.assertTrue(false);
+			e.printStackTrace();
+		}
+	}
+	@Then("^IPO_10911 Stop Report Generation for current scenario Email auto approval process$")
+	public void getResult_For_IPO_10911() {
+		extent.endTest(testReporter);
+		extent.flush();
+		extent.close();
+	}
+	@Then("^IPO_10911 Close the browser Email auto approval process$")
+	public void flushReporter_For_IPO_10911() {
+		driver.close();
+		driver.quit();
+	}
+	//**************************************************************************************************
+	//*******************************IPO-10911 Functions************************************************
+	public void logIntoGmailWithAttachment (String url, String username, String passowrd) throws Exception {
+		Robot robot = new Robot();
+		driver.get(url);
+		driver.findElement(By.id("sign_in_username")).sendKeys(username);
+		driver.findElement(By.id("sign_in_password")).sendKeys(passowrd);
+		driver.findElement(By.xpath("//input[@value='Log In']")).click();
+		try {
+			WebDriverWait wait = new WebDriverWait (driver, 5);
+			ele = By.xpath("//div[text()='zabid@acumensolutions.com']");
+			wait.until(ExpectedConditions.visibilityOfElementLocated(ele));
+			driver.findElement(By.xpath("//span[text()='Continue']")).click();
+		} catch (Exception e) {
+			
+		}
+		ele = By.xpath("//div[text()='Compose']");
+		fluentWaitForElementVisibility();
+		driver.findElement(ele).click();
+		ele = By.xpath("//textarea[@name='to']");
+		fluentWaitForElementVisibility();
+		driver.findElement(ele).click();
+		driver.findElement(ele).sendKeys(emailLink);
+		robot.keyPress(KeyEvent.VK_TAB);
+		Utils.sleep(1);
+		robot.keyRelease(KeyEvent.VK_TAB);
+		Utils.sleep(1);
+		randomDateTime();
+		driver.findElement(By.xpath("//input[@name='subjectbox']")).sendKeys(subjectLine);
+		robot.keyPress(KeyEvent.VK_TAB);
+		Utils.sleep(1);
+		robot.keyRelease(KeyEvent.VK_TAB);
+		Utils.sleep(1);
+		driver.findElement(By.xpath("//div[contains(@class,'Am Al editable')]")).click();
+		driver.findElement(By.xpath("//div[contains(@class,'Am Al editable')]")).sendKeys(subjectLine);
+		Utils.sleep(1);
+		attach_file_and_send(Constants.privacy_pia_attachment_url, false);
+		Utils.sleep(4);
+		driver.findElement(By.xpath("//div[text()='Send']")).click();
+		Utils.sleep(4);
+		ele = By.xpath("//span[text()='Message sent.']");
+		fluentWaitForElementVisibility();
+		driver.close();
+		driver.quit();
+	}
+	private void attach_file_and_send(String attachmentPath, boolean pressTab) throws Exception {
+		try {
+		driver.findElement(By.cssSelector("[command='Files']")).click();
+		} catch (Exception e) {
+			
+		}
+
+		StringSelection s = new StringSelection(attachmentPath);
+		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(s, null);
+		Robot robot = new Robot();
+
+		Utils.sleep(2);
+		if (Constants.isWindows()) {
+			// For windows
+			robot.keyPress(KeyEvent.VK_ENTER);
+			robot.keyRelease(KeyEvent.VK_ENTER);
+			robot.keyPress(KeyEvent.VK_CONTROL);
+			robot.keyPress(KeyEvent.VK_V);
+			robot.keyRelease(KeyEvent.VK_CONTROL);
+			robot.keyRelease(KeyEvent.VK_V);
+
+			Utils.sleep(3);
+			robot.keyPress(KeyEvent.VK_ENTER);
+			robot.keyRelease(KeyEvent.VK_ENTER);
+		} else {
+			// Cmd + Tab is needed since it launches a Java app and the browser looses focus
+			Utils.sleep(5);
+			if (pressTab) {
+				robot.keyPress(KeyEvent.VK_META);
+				robot.keyPress(KeyEvent.VK_TAB);
+				robot.keyRelease(KeyEvent.VK_META);
+				robot.keyRelease(KeyEvent.VK_TAB);
+			}
+
+			robot.keyPress(KeyEvent.VK_META);
+			Utils.sleep(1);
+			robot.keyPress(KeyEvent.VK_SHIFT);
+			Utils.sleep(1);
+			robot.keyPress(KeyEvent.VK_G);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_META);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_SHIFT);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_G);
+			Utils.sleep(1);
+
+			// Paste the clipboard value
+			robot.keyPress(KeyEvent.VK_META);
+			Utils.sleep(1);
+			robot.keyPress(KeyEvent.VK_V);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_META);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_V);
+			Utils.sleep(1);
+
+			// Press Enter key to close the Goto window and Upload window
+			robot.keyPress(KeyEvent.VK_ENTER);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_ENTER);
+			robot.delay(500);
+			robot.keyPress(KeyEvent.VK_ENTER);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_ENTER);
+			Utils.sleep(1);
+		}
+
+		// switch back
+		driver.switchTo().activeElement();
+
+		Utils.sleep(4);
+	}
+	public void createNewIpoResponseFor10911() {
+		WebDriverWait wait = new WebDriverWait (driver, 300);
+		fetchCorrectIframe(By.xpath("//a[@title='Details']/span/span[1]"));
+		driver.findElement(By.xpath("//a[@title='Feed']/span/span[1]")).click();
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//span[text()='New Response']")));
+		driver.findElement(By.xpath("//span[text()='New Response']")).click();
+		Utils.sleep(2);
+		//driver.switchTo().defaultContent();
+		wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(driver.findElement(By.xpath(".//iframe[@title='ResponseBuilder']"))));
+		element = driver.findElements(By.xpath("//div[contains(text(),'Response Recipients')]")).get(0);
+		scrollingFunction();
+		driver.findElements(By.xpath("//input[@maxlength='255']")).get(0).sendKeys("IPO");
+		driver.findElement(By.xpath("//button[@title='Search']")).click();
+		Utils.sleep(2);
+		wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//span[text()='Select Item 1']/preceding-sibling::span"))));
+		driver.findElement(By.xpath("//span[text()='Select Item 1']/preceding-sibling::span")).click();
+		Utils.sleep(1);
+		driver.findElement(By.xpath("//span[text()='Select Item 2']/preceding-sibling::span")).click();
+		Utils.sleep(1);
+		selectDropdownListValue("CC", driver.findElement(By.xpath("//tr[2]/td[4]/div/select")));
+		Utils.sleep(1);
+		testReporter.log(LogStatus.PASS, "CC email address is added.");
+		selectDropdownListValue("BCC", driver.findElement(By.xpath("//tr[3]/td[4]/div/select")));
+		Utils.sleep(1);
+		testReporter.log(LogStatus.PASS, "BCC email address is added.");
+		element = driver.findElement(By.xpath(".//span[text()='Select Folder']"));
+		scrollingFunction();
+		element = driver.findElement(By.xpath(".//option[contains(text(),'IPO Greetings')]"));
+		element.click();
+		Utils.sleep(1);
+		driver.findElement(By.xpath("//span[contains(text(),'Available Templates')]/parent::div/following-sibling::div[1]/select/option[contains(text(),'IPO Greetings')]")).click();
+		Utils.sleep(1);
+		driver.findElement(By.xpath("//button[@title='Select to move the template to the selected box. Information about the template will appear below.']")).click();
+		//Select 2nd one
+		element = driver.findElement(By.xpath(".//option[contains(text(),'IPO I-829')]"));
+		Actions actObj = new Actions(driver);
+		actObj.moveToElement(driver.findElement(By.xpath(".//option[contains(text(),'IPO I-829')]"))).doubleClick().build().perform();
+		Utils.sleep(1);
+		driver.findElement(By.xpath(".//option[contains(text(),'ASC Appointment Language (due to C3 Conversion)')]")).click();
+		Utils.sleep(1);
+		driver.findElement(By.xpath("//button[@title='Select to move the template to the selected box. Information about the template will appear below.']")).click();
+		//Select 3rd one
+		element = driver.findElement(By.xpath(".//option[contains(text(),'IPO Closings')]/preceding::option[1]"));
+		scrollingFunction();
+		Utils.sleep(2);
+		element = driver.findElement(By.xpath(".//option[contains(text(),'IPO Closings')]"));
+		//scrollingFunction();
+		actObj.moveToElement(element).doubleClick().build().perform();
+		Utils.sleep(1);
+		element = driver.findElement(By.xpath("//span[contains(text(),'Available Templates')]"));
+		scrollingFunction();
+		Utils.sleep(1);
+		element = driver.findElement(By.xpath("//span[contains(text(),'Available Templates')]/parent::div/following-sibling::div[1]/select/option[contains(text(),'IPO Closing')]"));
+		Utils.sleep(1);
+		element.click();
+		driver.findElement(By.xpath("//button[@title='Select to move the template to the selected box. Information about the template will appear below.']")).click();
+		Utils.sleep(2);
+		element = driver.findElement(By.xpath("//button[contains(text(),'Generate Preview')]"));
+		scrollingFunction();
+		Utils.sleep(1);
+		element.click();
+		Utils.sleep(2);
+		element = driver.findElement(By.xpath("//button[contains(text(),'Submit')]"));
+		scrollingFunction();
+		element = driver.findElement(By.xpath("//button[contains(text(),'Save Draft')]"));
+		Utils.sleep(2);
+		element.click();
+		ele = By.xpath("//div[contains(text(),'Your draft response has been saved successfully.')]");
+		fluentWaitForElementVisibility();
+		element = driver.findElement(By.xpath("//button[contains(text(),'Save Draft')]"));
+		scrollingFunction();
+		Utils.sleep(2);
+		driver.findElement(By.xpath("//button[contains(text(),'Load Original Attachments')]")).click();
+		Utils.sleep(2);
+		ele = By.xpath("//div[contains(text(),'File uploaded successfully')]");
+		fluentWaitForElementVisibility();
+		element = driver.findElement(By.xpath("//button[contains(text(),'Load Original Attachments')]"));
+		scrollingFunction();
+		fileNm = driver.findElement(By.xpath("//button[@title='Delete Attachment']/preceding-sibling::button")).getAttribute("title");
+		Utils.sleep(1);
+		System.out.println("File Name"+fileNm);
+		testReporter.log(LogStatus.PASS, "Loded file name "+fileNm);
+		driver.findElement(By.xpath("//button[contains(text(),'Submit')]")).click();
+		Utils.sleep(3);
+		wait.until(ExpectedConditions.alertIsPresent());
+		driver.switchTo().alert().accept();
+		ele = By.xpath("//div[contains(text(),'Your response has been successfully submitted and is now locked.')]");
+		fluentWaitForElementVisibility();
+		driver.findElement(By.xpath("//a[text()='View Response']")).click();
+		Utils.sleep(2);
+		driver.switchTo().defaultContent();
+		driver.switchTo().defaultContent();
+		fetchCorrectIframe(By.xpath("//h3[text()='Files']"));
+		element = driver.findElement(By.xpath("//a[text()='"+fileNm+"']/parent::*"));
+		highlightElement();
+		testReporter.log(LogStatus.PASS, fileNm+" attachment file is present in view response page.");
+		driver.switchTo().defaultContent();
+		driver.switchTo().defaultContent();
+		Utils.sleep(1);
+		driver.findElement(By.xpath("//div[@id='navigatortab']/div[2]/div[@class='x-tab-tabmenu-right']")).click();
+		Utils.sleep(1);
+		((JavascriptExecutor)driver).executeScript("arguments[0].click();", 
+				driver.findElement(By.xpath("//a/span[text()='Close all primary tabs']")));
+		Utils.sleep(4);
+		wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(driver.findElement(By.xpath("//div[@id='navigatortab']/div[3]/descendant::iframe[not(starts-with(@src,'https://uscis--uatg.my.salesforce.com'))]"))));
+		driver.findElement(By.xpath("//table[@class='x-grid3-row-table']/tbody/descendant::a[text()='"+newSINo+"']")).click();
+		driver.switchTo().defaultContent();
+	}
+	//call the response check functions
+	public void validateCCBCCEmail() {
+		fetchCorrectIframe(By.xpath("//a[@title='Details']/span/span[1]"));
+		driver.findElement(By.xpath("//a[@title='Details']/span/span[1]")).click();
+		Utils.sleep(1);
+		element = driver.findElement(By.xpath("//img[@title='Response']/following::*[text()='Responses']"));
+		scrollingFunction();
+		Utils.sleep(2);
+		element = driver.findElement(By.xpath("//tr[2]/td[text()='Sent']"));
+		highlightElement();
+		element = driver.findElement(By.xpath("//input[@value='Send an Email']/parent::*"));
+		scrollingFunction();
+		Utils.sleep(2);
+		driver.findElement(By.xpath("//tr[2]/th[text()='Sent']/following-sibling::td[2]/a")).click();
+		driver.switchTo().defaultContent();
+		fetchCorrectIframe(By.xpath("//h3[text()='Address Information']/parent::*"));
+		element = driver.findElement(By.xpath("//td[text()='To Address']/parent::tr"));
+		highlightElement();
+		element = driver.findElement(By.xpath("//td[text()='CC Address']/parent::tr"));
+		highlightElement();
+		element = driver.findElement(By.xpath("//td[text()='BCC Address']/parent::tr"));
+		highlightElement();
+		driver.switchTo().defaultContent();
+	}
+	//**************************************************************************************************
 	/*
 	 * Below main function is for testing purpose only....
 	 */
-	public static void main(String[] args) throws AWTException {
+	public static void main(String[] args) throws Exception {
 		Email_Auto_Approval_QC_5_Percent_E2E gt = new Email_Auto_Approval_QC_5_Percent_E2E();
 		gt.launch();
-		//gt.searchHDISOVSCitems("HD ISO VSC");
-		//gt.logInAsInternalUser("HD ISO VSC");
-		//newSINo = "04788093";
+		/*gt.fetchEmailLink("ipoemailtocaseqa");
+		gt.logIntoGmailWithAttachment("https://acumensolutions-com.clearlogin.com/login","zabid","Acumen1234");
+		gt.launch();
+		gt.searchHDISOVSCitems("IPO Super User");
+		gt.logInAsInternalUser("IPO Super User");*/
+		newSINo = "07198986";
+		//gt.ipoSuperUserEmailToQ("IPO Email To Case Q");
+		//gt.currentUserLogOut();
+		gt.searchHDISOVSCitems("HD ISO VSC");
+		gt.logInAsInternalUser("HD ISO VSC");
+		//gt.duplicateSIandOpenSI();
+		Utils.sleep(8);
+		gt.editSIandSave();
+		gt.setReceiptNumberAndContactName("WAC1690258857", "EDVARD EDOUARD");
+		//gt.createNewIpoResponseFor10911();
+		//gt.validateCCBCCEmail();
 		//emailLink = "cishdqa@2k7m4p7no7eke6gewwvfqe38ioy6oah93ilae2z792qb0dt7fy.r-1owyeam.cs32.apex.sandbox.salesforce.com";
-		gt.logIntoGmailForReplyValidation("https://acumensolutions-com.clearlogin.com/login","zabid","Acumen123");
+		//gt.logIntoGmailForReplyValidation("https://acumensolutions-com.clearlogin.com/login","zabid","Acumen123");
 		//gt.verifyProfile();
 		//gt.relatedServiceItems();
 		/*Then Email auto approval process Replying to the triggered email "https://acumensolutions-com.clearlogin.com/login" with user id "zabid"

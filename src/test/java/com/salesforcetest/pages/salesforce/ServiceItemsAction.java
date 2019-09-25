@@ -37,7 +37,8 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 	@FindBy(css = "a[title='Select List View']")
 	WebElement serviceItemsPageOptions;
 
-	@FindBy(name = "refreshButton")
+	//@FindBy(name = "refreshButton")
+	@FindBy(xpath = "//button[@name='refreshButton']")
 	WebElement refreshBtn;
 
 	@FindBy(className = "listViewContent")
@@ -396,19 +397,18 @@ public class ServiceItemsAction extends ServiceItemActionHelper {
 			Utils.sleep(5);
 			try {
 			String actualSubject = listDiv.findElement(By.tagName("table"))
-					.findElement(By.cssSelector("tbody > tr:nth-child(1) > td:nth-child(6)")).getText();
-
+					.findElements(By.cssSelector("tbody > tr:nth-child(1) > td:nth-child(6)")).get(0).getText();
 			if (actualSubject.contains(Constants.compliance_subject)) {
 				Assert.assertEquals(actualSubject, Constants.compliance_subject);
 				serviceItemNo = listDiv.findElement(By.tagName("table"))
-						.findElement(By.cssSelector("tbody > tr:nth-child(1) > th")).getText();
+						.findElements(By.cssSelector("tbody > tr:nth-child(1) > th")).get(0).getText();
 				testReporter.log(LogStatus.PASS, "Test Automated complience case creation by email.");
 				loop = false;
 			} else {
 				counter++;
 			}
 			} catch (Exception e) {
-				
+				e.printStackTrace();
 			}
 			if (counter == rounds) {
 				loop = false;

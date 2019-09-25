@@ -58,7 +58,7 @@ public class ComplianceManagementScenarioTest {
 		
 		Utils.open_another_tab(driver);
 		
-		//new SalesforceLogin(driver).login(Constants.salesforce_username, Constants.salesforce_password);
+		
 		new SalesforceLogin(driver).login(Constants.salesforce_pstaff2_username_Admin, Constants.salesforce_pstaff2_password_Admin);
 		new SalesforceLogin(driver).internalUserLogin("Privacy Staff");
 	}
@@ -106,11 +106,8 @@ public class ComplianceManagementScenarioTest {
 			"ComplianceManagementScenario_Test_S32" })
 	public void ComplianceManagementScenario_Test_S34() throws Exception {
 		Utils.switch_to_tab(driver, 1);
-		
 		//driver.get(Constants.salesforce_url);
 		driver.get(driver.getCurrentUrl());
-		
-
 		cms.verify_status_change();
 	}
 
@@ -131,7 +128,7 @@ public class ComplianceManagementScenarioTest {
 		// back to sales force
 		Utils.switch_to_tab(driver, 1);
 				
-		cms.select_service_item_and_send_email(Constants.reporter_email, Constants.privacy_pia_attachment_url,"");
+		cms.select_service_item_and_send_email(Constants.reporter_email, Constants.privacy_pia_attachment_url, "");
 	}
 
 	@Test(testName = "Scenario_3_7", description = "Scenario 3.7 - Send email to DHS", priority = 7)
@@ -140,7 +137,6 @@ public class ComplianceManagementScenarioTest {
 				
 		//driver.get(Constants.salesforce_url);
 		driver.get(driver.getCurrentUrl());
-
 		cms.send_email_to_dhs(Constants.dhs_email);
 	}
 

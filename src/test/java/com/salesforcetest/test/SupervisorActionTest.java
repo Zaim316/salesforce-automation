@@ -1,5 +1,6 @@
 package com.salesforcetest.test;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,25 +60,25 @@ public class SupervisorActionTest {
 	}
 
 	@Test(testName = "Scenario_10_1", description = "Scenario 10.1 - Approve Service Item", priority = 1)
-	public void approve_service_item_S10_1() {
+	public void approve_service_item_S10_1() throws IOException {
 		supervisor.approve_service_item();
 	}
 	
 	@Test(testName = "Scenario_10_2", description = "Scenario 10.1 - Reject Service Item", priority = 2)
-	public void reject_service_item_S10_2() {
+	public void reject_service_item_S10_2() throws IOException {
 		//driver.get(Constants.salesforce_url);
 		supervisor.reject_service_item();
 	}
 	
 	@Test(testName = "Scenario_11_1", description = "Scenario 11.1 - Reassign Service Item", priority = 3)
-	public void reassign_service_item_S11_1() {
+	public void reassign_service_item_S11_1() throws IOException {
 		//driver.get(Constants.salesforce_url);
 		String newUser = "Privacy Staff";
 		supervisor.reassign_service_item(newUser);
 	}
 	
 	@Test(testName = "Scenario_12_1", description = "Scenario 12.1 - Setting up training", priority = 4)
-	public void setting_up_training_S12_1() {
+	public void setting_up_training_S12_1() throws IOException {
 		//driver.get(Constants.salesforce_url);
 
 		supervisor.set_up_training();

@@ -896,7 +896,7 @@ public class RefreshExistingUserRecordAction {
 		ele1 = By.xpath(".//input[@title='QC Percentage for HD ISO VSC']");
 		fluentWaitForElementVisibility();
 		Utils.sleep(2);
-		driver1.findElement(By.xpath(".//table[@title='ISO Users']/tbody/tr[2]/td[1]/input[@type='checkbox']")).click();
+		driver1.findElement(By.xpath(".//table[@title='ISO Users']/tbody/tr[1]/td[1]/input[@type='checkbox']")).click();
 		Utils.sleep(1);
 		driver1.findElement(ele1).clear();
 		driver1.findElement(ele1).sendKeys(percentageValue);

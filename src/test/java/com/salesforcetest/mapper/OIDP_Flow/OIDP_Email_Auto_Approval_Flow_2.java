@@ -694,7 +694,7 @@ public class OIDP_Email_Auto_Approval_Flow_2 {
 			element = driver.findElement(By.xpath("//*[contains(text(),'Response Recipients')]"));
 			scrollingFunction();
 			Utils.sleep(2);
-			element = driver.findElement(By.xpath("//span[text()='Email Response Subject']"));
+			element = driver.findElement(By.xpath("//label[text()='Response Subject:']"));
 			scrollingFunction();
 			Utils.sleep(2);
 			try {
@@ -1241,7 +1241,148 @@ public class OIDP_Email_Auto_Approval_Flow_2 {
 				driver.findElement(By.xpath(".//*[@id='oneHeader']/descendant::a[contains(text(),'Log out')]")).click();
 			}
 		}
-		/* Intentionally it was kept to test test each module seperately if there is nay script failure.
+		//*************************************************************ISO12664************************************************************
+		@Given("^OIDP ISO12664 scenario Registered User is logged in with \"(.*)\"$")
+		public void init_ISO12664(String user) throws IOException {
+			extent = new ExtentReports(workingDir+"\\test-report\\ISO12664_Service_Item_Link"+randomDateTime1()+".html", true);
+			testReporter = extent.startTest("OIDP ");
+			try {
+				launch();
+				testReporter.log(LogStatus.PASS, "User logs in successfully");
+			} catch (Exception e) {
+				testReporter.log(LogStatus.FAIL, "User logs in successfully");
+				screenShotPath = GetScreenShot.capture(driver);
+				testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
+				getResult();
+				Assert.assertTrue(false);
+				e.printStackTrace();
+			}
+		}
+		@When("^OIDP ISO12664 scenario Search for required Internal User \"(.*)\"$")
+		public void search_For_Internal_User_ISO12664(String user) throws IOException {
+			try {
+				searchHDISOVSCitems(user);
+				testReporter.log(LogStatus.PASS, "Search with required User");
+			} catch (Exception e) {
+				testReporter.log(LogStatus.FAIL, "Search with required User");
+				screenShotPath = GetScreenShot.capture(driver);
+				testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
+				getResult();
+				Assert.assertTrue(false);
+				e.printStackTrace();
+			}
+		}
+		@Then("^OIDP ISO12664 scenario Logging in as Internal user and verifying \"(.*)\"$")
+		public void logging_In_As_Internal_User_And_Verify_Profile_ISO12664(String user) throws IOException {
+			try {
+				logInAsInternalUser(user);
+				testReporter.log(LogStatus.PASS, "Verify log in as Internal User");
+			} catch (Exception e) {
+				testReporter.log(LogStatus.FAIL, "Verify log in as Internal User");
+				screenShotPath = GetScreenShot.capture(driver);
+				testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
+				getResult();
+				Assert.assertTrue(false);
+				e.printStackTrace();
+			}
+		}
+		@Then("^OIDP ISO12664 scenario Open an existing service item$")
+		public void ISO12664_Open_An_Existing_DI() throws IOException {
+			try {
+				openAnyExistingSI();
+				testReporter.log(LogStatus.PASS, "Open an existing service item and open that service item : "+newSINo);
+			} catch (Exception e) {
+				testReporter.log(LogStatus.FAIL, "Open an existing service item and open that service item : "+newSINo);
+				screenShotPath = GetScreenShot.capture(driver);
+				testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
+				getResult();
+				Assert.assertTrue(false);
+				e.printStackTrace();
+			}
+		}
+		@Then("^OIDP ISO12664 scenario Creating a new Service LINK with contact name as \"(.*)\" and role as \"(.*)\"$")
+		public void Creating_a_New_Service_Link_ISO12664(String contactNm, String role) throws IOException {
+			try {
+				serviceLinkCreationWithRoleItemValidation(contactNm, role);
+				testReporter.log(LogStatus.PASS, "Creating a new Service LINK. Link Number :"+linkNumber);
+			} catch (Exception e) {
+				testReporter.log(LogStatus.FAIL, "Creating a new Service LINK. Link Number :"+linkNumber);
+				screenShotPath = GetScreenShot.capture(driver);
+				testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
+				getResult();
+				Assert.assertTrue(false);
+				e.printStackTrace();
+			}
+		}
+		@Then("^Stop Report Generation for current scenario For OIDP ISO12664 scenario$")
+		public void getResult_ISO12664() {
+			//extent.endTest("HD_ISO_VSC_Existing_User_Record_Refresh");
+			extent.endTest(testReporter);
+			extent.flush();
+			extent.close();
+		}
+		@Then("^Close the browser For OIDP ISO12664 scenario$")
+		public void flushReporter_ISO12664() {
+			driver.close();
+			driver.quit();
+		}
+		public void openAnyExistingSI() {
+			Utils.sleep(4);
+			driver.findElement(By.xpath(".//*[@id='oneHeader']/descendant::*[@title='Show Navigation Menu']")).click();
+			Utils.sleep(1);
+			element = driver.findElement(By.xpath(".//*[@id='navMenuList']/div/ul/descendant::a[contains(@title,'Service Items')]"));
+			scrollingFunction();
+			Utils.sleep(1);
+			element.click();
+			Utils.sleep(2);
+			driver.findElement(By.xpath("//span[text()='Service Items']/following-sibling::a[@title='Select List View']")).click();
+			Utils.sleep(1);
+			element = driver.findElement(By.xpath("//div[@class='listContent']/descendant::span[contains(text(),'OIDP Lockbox Support')]"));
+			scrollingFunction();
+			Utils.sleep(1);
+			element.click();
+			Utils.sleep(2);
+			ele = By.xpath("//table[@data-aura-class='uiVirtualDataTable']/tbody/tr[1]/th/descendant::a");
+			fluentWaitForElementVisibility();
+			newSINo = driver.findElement(By.xpath("//table[@data-aura-class='uiVirtualDataTable']/tbody/tr[1]/th/descendant::a")).getText();
+			driver.findElement(By.xpath("//table[@data-aura-class='uiVirtualDataTable']/tbody/tr[1]/th/descendant::a")).click();
+		}
+		
+		public void serviceLinkCreationWithRoleItemValidation(String contactNm, String role) {
+			driver.findElement(By.xpath("//a[@title='Related']")).click();
+			element = driver.findElement(By.xpath("//span[@title='Files']"));
+			scrollingFunction();
+			Utils.sleep(1);
+			element = driver.findElement(By.xpath("//span[@title='Files']"));
+			scrollingFunction();
+			Utils.sleep(1);
+			driver.findElement(By.xpath("//span[text()='Service Item-Contact Links']/parent::a/parent::*/parent::*/parent::*/following-sibling::div/descendant::a[@title='New' and @role='button']")).click();
+			Utils.sleep(2);
+			driver.findElement(By.xpath("//input[@title='Search Contacts']")).sendKeys(contactNm);//Zaim Abid
+			Utils.sleep(2);
+			driver.findElement(By.xpath("//div[@class='listContent']/ul[contains(@class,'lookup__list')]/li[1]")).click();
+			Utils.sleep(1);
+			element = driver.findElement(By.xpath("//span[text()='Role']"));
+			scrollingFunction();
+			Utils.sleep(1);
+			driver.findElement(By.xpath("//span[text()='Role']/parent::*/following-sibling::div/div[1]")).click();
+			Utils.sleep(2);
+			driver.findElement(By.xpath("//ul[@class='scrollable']/li/a[contains(text(),'"+role+"')]")).click();//Congressional Liaison
+			Utils.sleep(1);
+			driver.findElement(By.xpath("//button[@title='Save']")).click();
+			Utils.sleep(1);
+			ele = By.xpath("//span[@data-aura-class='forceActionsText']");
+			fluentWaitForElementVisibility();
+			Utils.sleep(1);
+			element = driver.findElement(By.xpath("//span[text()='Service Item']/parent::div/following-sibling::div/descendant::a[contains(text(),'"+newSINo+"')]"));
+			highlightElement();
+			Utils.sleep(1);
+			linkNumber = driver.findElement(By.xpath("//span[text()='Service Item-Contact Link Number']/parent::div/following-sibling::div/descendant::span[contains(@class,'uiOutputText')]")).getText();
+			element = driver.findElement(By.xpath("//span[text()='Role']/parent::div/following-sibling::div/descendant::span[contains(text(),'"+role+"')]"));
+			highlightElement();
+		}
+		//*********************************************************************************************************************************
+	// Intentionally it was kept to test test each module seperately if there is nay script failure.
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 		OIDP_Email_Auto_Approval_Flow_2 refVar = new OIDP_Email_Auto_Approval_Flow_2();
@@ -1261,13 +1402,14 @@ public class OIDP_Email_Auto_Approval_Flow_2 {
 		//refVar.createNewEmailResponse();
 		//refVar.createHold("Transaction in Process", "Test Hold Functionality");
 		//refVar.validateError();
-		Utils.sleep(8);
+		//Utils.sleep(8);
 		//refVar.removeHoldAndMarkCompleted();
 		//refVar.relatedServiceItemCreation("Email");
 		//refVar.verifyChildServiceItem();
 		//refVar.serviceLinkCreation("Zaim Abid","AILA Liaison");
-		refVar.cloneMerge();
+		refVar.openAnyExistingSI();
+		refVar.serviceLinkCreationWithRoleItemValidation("Zaim Abid", "Congressional Liaison");
 		//refVar.submitResponseFromClone();
-	}*/
+	}
 
 }

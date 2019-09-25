@@ -3,6 +3,7 @@ package com.salesforcetest.mapper.srire2e;
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ import com.relevantcodes.extentreports.ExtentTest;
 import com.relevantcodes.extentreports.LogStatus;
 import com.salesforcetest.main.uatg.HD_ISO_VSC_Service_Request_Rejection_E2E;
 import com.salesforcetest.pages.salesforce.SalesforceLogin;
+import com.salesforcetest.pages.salesforce.uatg.GetScreenShot;
 import com.salesforcetest.pages.salesforce.uatg.RefreshExistingUserRecordAction;
 import com.salesforcetest.shared.Constants;
 import com.salesforcetest.shared.ExtentReporter;
@@ -42,7 +44,7 @@ import cucumber.api.java.en.When;
 public class HD_ISO_VSC_New_Service_Response_Rejection_Flow {
 	public static WebDriver driver;
 	private WebElement element;
-	public static String newSINo;
+	public static String newSINo,screenShotPath;
 	private By ele;
 	String workingDir = System.getProperty("user.dir");
 	
@@ -50,7 +52,7 @@ public class HD_ISO_VSC_New_Service_Response_Rejection_Flow {
 	
 	static ExtentTest testReporter;
 	@Given("^For rejection and approval of response scenario Registered User is logged in with \"(.*)\"$")
-	public void init(String user) {
+	public void init(String user) throws IOException {
 		extent = new ExtentReports(workingDir+"\\test-report\\E2EflowWithAdditionalReviewEnabledScenarioWithHDusr"+randomDateTime1()+".html", true);
 		testReporter = extent.startTest("End to End Approval and Rejection Flow");
 		try {
@@ -59,13 +61,15 @@ public class HD_ISO_VSC_New_Service_Response_Rejection_Flow {
 			testReporter.log(LogStatus.PASS, "User logs in successfully");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "User logs in successfully");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@Then("For rejection and approval of response scenario set QC Percentage to \"(.*)\"$")
-	public void Set_QC_Percentage(String val) {
+	public void Set_QC_Percentage(String val) throws IOException {
 		try {
 			searchHDISOVSCitems("One HD Supervisor");
 			logInAsInternalUser("One HD Supervisor");
@@ -74,97 +78,113 @@ public class HD_ISO_VSC_New_Service_Response_Rejection_Flow {
 			testReporter.log(LogStatus.PASS, "Set percentage to "+val+" successful.");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Set percentage to "+val+" successful.");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@Then("For rejection and approval of response scenario Verifying the current logged in user profile$")
-	public void verify_Logged_In_User_Profile() {
+	public void verify_Logged_In_User_Profile() throws IOException {
 		try {
 			verifyProfile();
 			testReporter.log(LogStatus.PASS, "Verifying the current logged in user profile:");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Verifying the current logged in user profile:");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@When("^For rejection and approval of response scenario Search for required Internal User \"(.*)\"$")
-	public void search_For_Internal_User(String user) {
+	public void search_For_Internal_User(String user) throws IOException {
 		try {
 			searchHDISOVSCitems(user);
 			testReporter.log(LogStatus.PASS, "Search with required User");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Search with required User");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@Then("^For rejection and approval of response scenario Logging in as Internal user and verifying \"(.*)\"$")
-	public void logging_In_As_Internal_User_And_Verify_Profile(String user) {
+	public void logging_In_As_Internal_User_And_Verify_Profile(String user) throws IOException {
 		try {
 			logInAsInternalUser(user);
 			testReporter.log(LogStatus.PASS, "Verify log in as Internal User");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Verify log in as Internal User");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@When("^For rejection and approval of response scenario Search for customer \"(.*)\"$")
-	public void search_customer(String customer) throws AWTException {
+	public void search_customer(String customer) throws AWTException, IOException {
 		try {
 			customerSearch(customer);
 			testReporter.log(LogStatus.PASS, "Search for required customer");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Search for required customer");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@Then("^For rejection and approval of response scenario Refresh the customer data and wait for Refresh successful message$")
-	public void update_customer() throws AWTException {
+	public void update_customer() throws AWTException, IOException {
 		try {
 			customerRefresh();
 			testReporter.log(LogStatus.PASS, "Refreshing the input customer details and wait till refreshing mechanism is completed");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Refreshing the input customer details and wait till refreshing mechanism is completed");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@Then("^For rejection and approval of response scenario Open the application record details from Refresh User page \"(.*)\"$")
-	public void open_application_details(String appNumber) {
+	public void open_application_details(String appNumber) throws IOException {
 		try {
 			clickOnRecordItemFromOwnerPage(appNumber);
 			testReporter.log(LogStatus.PASS, "Opening the Application details from Customer refresh page.");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Opening the Application details from Customer refresh page.");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@Then("^For rejection and approval of response scenario Click on create new service item \"(.*)\"$")
-	public void click_on_create_new_service_item(String appNumber) {
+	public void click_on_create_new_service_item(String appNumber) throws IOException {
 		try {
 			createNewServiceItemParam(appNumber);
 			testReporter.log(LogStatus.PASS, "Click on Create new Service item button");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Click on Create new Service item button");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@And("^To create new service item Provide all new mandatory data$")
-	public void create_new_service_item(DataTable dt) {
+	public void create_new_service_item(DataTable dt) throws IOException {
 		//need to code as per feature file.
 		List<Map<String, String>> list = dt.asMaps(String.class, String.class);
 		String fOrgName = list.get(0).get("Org Name");
@@ -184,6 +204,8 @@ public class HD_ISO_VSC_New_Service_Response_Rejection_Flow {
 			testReporter.log(LogStatus.PASS, "Give Organization Name : "+fOrgName);
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Give Organization Name : "+fOrgName);
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
@@ -193,6 +215,8 @@ public class HD_ISO_VSC_New_Service_Response_Rejection_Flow {
 			testReporter.log(LogStatus.PASS, "Give Email Id: "+email);
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Give Email Id: "+email);
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
@@ -202,6 +226,8 @@ public class HD_ISO_VSC_New_Service_Response_Rejection_Flow {
 			testReporter.log(LogStatus.PASS, "Give Sender Type Name : "+senderType);
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Give Sender Type Name : "+senderType);
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
@@ -211,6 +237,8 @@ public class HD_ISO_VSC_New_Service_Response_Rejection_Flow {
 			testReporter.log(LogStatus.PASS, "Provide Subject,  Description and Form Type respectively: "+subject+" ,"+description+" and "+formType);
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Provide Subject,  Description and Form Type respectively: "+subject+" ,"+description+" and "+formType);
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
@@ -220,6 +248,8 @@ public class HD_ISO_VSC_New_Service_Response_Rejection_Flow {
 			testReporter.log(LogStatus.PASS, "Give Category, Kind Name and Comments respectively :"+category+" ,"+kind+" ,"+comm);
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Give Category, Kind Name and Comments respectively :"+category+" ,"+kind+" ,"+comm);
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
@@ -229,6 +259,8 @@ public class HD_ISO_VSC_New_Service_Response_Rejection_Flow {
 			testReporter.log(LogStatus.PASS, "Give Service Item Origin :"+io);
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Give Service Item Origin :"+io);
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
@@ -238,6 +270,8 @@ public class HD_ISO_VSC_New_Service_Response_Rejection_Flow {
 			testReporter.log(LogStatus.PASS, "Give Initial Queue : "+queue);
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Give Initial Queue : "+queue);
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
@@ -247,6 +281,8 @@ public class HD_ISO_VSC_New_Service_Response_Rejection_Flow {
 			testReporter.log(LogStatus.PASS, "Give Received Date (any past date) : "+dateTime);
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Give Received Date (any past date) : "+dateTime);
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
@@ -256,236 +292,276 @@ public class HD_ISO_VSC_New_Service_Response_Rejection_Flow {
 			testReporter.log(LogStatus.PASS, "Saving this new service item data");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Saving this new service item data");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@Then("^For rejection and approval of response scenario Verify New Service Item number and Details$")
-	public void Verify_New_SI() {
+	public void Verify_New_SI() throws IOException {
 		String newlyCreatedSI = null;
 		try {
 			newlyCreatedSI = (String) fetchServiceItemNo();
 			testReporter.log(LogStatus.PASS, "Validate new service item and new Service Item number :"+newlyCreatedSI);
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Validate new service item and new Service Item number :"+newlyCreatedSI);
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@Then("^For rejection and approval of response scenario Create a new response for new Service Item$")
-	public void Create_New_Response() {
+	public void Create_New_Response() throws IOException {
 		try {
 			createNewResponse();
 			testReporter.log(LogStatus.PASS, "Creating new sevice response of new service item.");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Creating new sevice response of new service item.");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@Then("^For rejection and approval of response scenario Verify newly created service response status$")
-	public void Verify_New_Service_Response() {
+	public void Verify_New_Service_Response() throws IOException {
 		try {
 			verifyNewResponseStatus();
 			testReporter.log(LogStatus.PASS, "Verify new sevice response status of new service item.");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Verify new sevice response status of new service item.");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@Then("^For rejection and approval of response scenario Logout from current profile$")
-	public void log_Out() {
+	public void log_Out() throws IOException {
 		try {
 			currentUserLogOut();
 			testReporter.log(LogStatus.PASS, "Logging out");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Logging out");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@When("^For rejection and approval of response scenario Search for required Supervisor User \"(.*)\"$")
-	public void search_For_Supervisor_User(String user) {
+	public void search_For_Supervisor_User(String user) throws IOException {
 		try {
 			searchHDISOVSCitems(user);
 			testReporter.log(LogStatus.PASS, "Search with One HD Supervisor");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Search with One HD Supervisor");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@Then("^For rejection and approval of response scenario Logging in as Supervisor user and verifying \"(.*)\"$")
-	public void logging_In_As_Supervisor_User_And_Verify_Profile(String user) {
+	public void logging_In_As_Supervisor_User_And_Verify_Profile(String user) throws IOException {
 		try {
 			logInAsInternalUser(user);
 			testReporter.log(LogStatus.PASS, "Login with One HD Supervisor");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Login with One HD Supervisor");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@Then("^For rejection and approval of response scenario Select required service item with Supervisor user to reject$")
-	public void Select_Required_Service_item() {
+	public void Select_Required_Service_item() throws IOException {
 		try {
 			selectRequiredDropdownlist();
 			testReporter.log(LogStatus.PASS, "Open the new service item");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Open the new service item");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@Then("^For rejection and approval of response scenario Reject the selected service request$")
-	public void Reject_Selected_Service_Rqst() {
+	public void Reject_Selected_Service_Rqst() throws IOException {
 		try {
 			rejectServiceRqst();
 			testReporter.log(LogStatus.PASS, "Reject the service request with proper comments");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Reject the service request with proper comments");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@Then("^For rejection and approval of response scenario Verify the rejected service request status$")
-	public void Verification_of_Rejected_Service() {
+	public void Verification_of_Rejected_Service() throws IOException {
 		try {
 			validateRejectedResponse();
 			testReporter.log(LogStatus.PASS, "Verify rejection status verification");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Verify rejection status verification");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@Then("^For rejection and approval of response scenario Logout from supervisor profile$")
-	public void log_Out2() {
+	public void log_Out2() throws IOException {
 		try {
 			currentUserLogOut();
 			testReporter.log(LogStatus.PASS, "Logging out");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Logging out");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@When("^For rejection and approval of response scenario Search for required Internal User which created the response \"(.*)\"$")
-	public void search_For_Internal_User2(String user) {
+	public void search_For_Internal_User2(String user) throws IOException {
 		try {
 			searchHDISOVSCitems(user);
 			testReporter.log(LogStatus.PASS, "Search with required User");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Search with required User");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@Then("^For rejection and approval of response scenario Logging in as Internal user and verifying User which created the response \"(.*)\"$")
-	public void logging_In_As_Internal_User_And_Verify_Profile2(String user) {
+	public void logging_In_As_Internal_User_And_Verify_Profile2(String user) throws IOException {
 		try {
 			logInAsInternalUser(user);
 			testReporter.log(LogStatus.PASS, "Verify log in as Internal User");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Verify log in as Internal User");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@Then("^For rejection and approval of response scenario Edit pre-created response and resubmit$")
-	public void Edit_Resubmit_the_response() {
+	public void Edit_Resubmit_the_response() throws IOException {
 		try {
 			searchWithStoredItem();
 			editRejectedSI();
 			testReporter.log(LogStatus.PASS, "Log in as HD ISC VSO user and edit the service item and resubmit.");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Log in as HD ISC VSO user and edit the service item and resubmit.");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@Then("^For rejection and approval of response scenario Logout from response editor's profile$")
-	public void log_Out3() {
+	public void log_Out3() throws IOException {
 		try {
 			currentUserLogOut();
 			testReporter.log(LogStatus.PASS, "Logging out");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Logging out");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@When("^For rejection and approval of response scenario Search for required Internal User Supervisor user \"(.*)\"$")
-	public void search_For_Internal_User3(String user) {
+	public void search_For_Internal_User3(String user) throws IOException {
 		try {
 			searchHDISOVSCitems(user);
 			testReporter.log(LogStatus.PASS, "Search with required User");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Search with required User");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@Then("^For rejection and approval of response scenario Logging in as Internal user and verifying Supervisor user \"(.*)\"$")
-	public void logging_In_As_Internal_User_And_Verify_Profile3(String user) {
+	public void logging_In_As_Internal_User_And_Verify_Profile3(String user) throws IOException {
 		try {
 			logInAsInternalUser(user);
 			testReporter.log(LogStatus.PASS, "Verify log in as Internal User");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Verify log in as Internal User");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@Then("^For rejection and approval of response scenario Select required service item with Supervisor user to approve$")
-	public void Select_Required_Service_item2() {
+	public void Select_Required_Service_item2() throws IOException {
 		try {
 			selectRequiredDropdownlist();
 			testReporter.log(LogStatus.PASS, "Open the new service item");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Open the new service item");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@Then("^For rejection and approval of response scenario Approve the selected service request$")
-	public void Approve_Selected_Service_Rqst() {
+	public void Approve_Selected_Service_Rqst() throws IOException {
 		try {
 			approveServiceRqst();
 			testReporter.log(LogStatus.PASS, "Approve the service request/response");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Approve the service request/response");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
 		}
 	}
 	@Then("^For rejection and approval of response scenario Validate approved request response status changed to sent$")
-	public void Validate_Approved_Rqst() {
+	public void Validate_Approved_Rqst() throws IOException {
 		try {
 			validateApprovedResponse();
 			testReporter.log(LogStatus.PASS, "Validate the approved request response");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "Validate the approved request response");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			getResult();
 			e.printStackTrace();
 			Assert.assertTrue(false);
@@ -662,7 +738,7 @@ public class HD_ISO_VSC_New_Service_Response_Rejection_Flow {
 		driver.switchTo().defaultContent();
 	}
 	public void customerRefresh() throws AWTException {
-		WebDriverWait wait = new WebDriverWait (driver, 40);
+		WebDriverWait wait = new WebDriverWait (driver, 400);
 		wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(driver.findElement(By.xpath("//div[@id='navigatortab']/div[3]/descendant::iframe[1]"))));
 		driver.findElement(By.xpath("//table[@id='asynchAccountResultTable']/tbody/tr[1]/td[1]/input[@value='Refresh']")).click();
 		Utils.sleep(2);
@@ -1265,7 +1341,7 @@ public class HD_ISO_VSC_New_Service_Response_Rejection_Flow {
 		ele = By.xpath(".//input[@title='QC Percentage for HD ISO VSC']");
 		fluentWaitForElementVisibility();
 		Utils.sleep(2);
-		driver.findElement(By.xpath(".//table[@title='ISO Users']/tbody/tr[2]/td[1]/input[@type='checkbox']")).click();
+		driver.findElement(By.xpath(".//table[@title='ISO Users']/tbody/tr[1]/td[1]/input[@type='checkbox']")).click();
 		Utils.sleep(1);
 		driver.findElement(ele).clear();
 		driver.findElement(ele).sendKeys(percentageValue);

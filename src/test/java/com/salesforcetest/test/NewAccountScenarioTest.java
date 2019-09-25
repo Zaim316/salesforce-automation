@@ -1,5 +1,6 @@
 package com.salesforcetest.test;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
@@ -51,14 +52,14 @@ public class NewAccountScenarioTest {
 	}
 
 	@Test(testName = "Scenario_1_1", description = "Scenario 1.1 and 1.2", priority = 1)
-	public void test_create_internal_account() throws InterruptedException {
+	public void test_create_internal_account() throws InterruptedException, IOException {
 		//driver.get(Constants.salesforce_url);
 
 		nas.create_internal_account_and_contact();
 	}
 
 	@Test(testName = "Scenario_1_3", description = "Scenario 1.3 and 1.4", priority = 2)
-	public void test_create_external_account() throws InterruptedException {
+	public void test_create_external_account() throws InterruptedException, IOException {
 		//driver.get(Constants.salesforce_url);
 
 		nas.create_external_account_and_contact();

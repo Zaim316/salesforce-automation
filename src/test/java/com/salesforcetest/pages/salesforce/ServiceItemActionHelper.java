@@ -213,17 +213,17 @@ public class ServiceItemActionHelper {
 		Utils.sleep(2);
 		
 		sections.get(1).findElement(By.className("uiInputTextForAutocomplete")).sendKeys(toEmail);
-
-		Utils.sleep(1);
+		driver.findElement(By.linkText("Email")).click();
+		/*Utils.sleep(1);
 		robot.keyPress(KeyEvent.VK_TAB);
 		Utils.sleep(1);
 		robot.keyRelease(KeyEvent.VK_TAB);
-		Utils.sleep(1);
+		Utils.sleep(1);*/
 		
-		driver.findElement(By.xpath("//input[@maxlength='3000']")).click();
+		/*driver.findElement(By.xpath("//input[@maxlength='3000']")).click();
 		driver.findElement(By.xpath("//input[@maxlength='3000']")).clear();
 		Utils.sleep(1);
-		driver.findElement(By.xpath("//input[@maxlength='3000']")).sendKeys(Constants.email_subject);
+		driver.findElement(By.xpath("//input[@maxlength='3000']")).sendKeys(Constants.email_subject);*/
 		Utils.scrollWindow(driver,450);
 
 		if (withAttachments) {
@@ -271,49 +271,63 @@ public class ServiceItemActionHelper {
 			Utils.sleep(4);
 
 			//modal.findElement(By.cssSelector("a[title='Notification Letter Without Credit Monitoring']")).click();
-			//driver.findElement(By.xpath("//a[@title='Notification Letter Without Credit Monitoring']/parent::th")).click();
+			//Actions action = new Actions(driver);
+			//WebElement el = driver.findElement(By.xpath("//button[text()='Notification Letter Without Credit Monitoring']/parent::*/parent::*/parent::*"));
+			//action.moveToElement(el).clickAndHold().build().perform();
+			//driver.findElement(By.xpath("//button[text()='Notification Letter Without Credit Monitoring']/parent::*/parent::*/parent::*")).click();
 			//driver.findElement(By.xpath("html/body/div[5]/div[2]/div[2]/div[2]/div/div[2]/div[3]/div[2]/div/div/table/tbody/tr[1]/th/a")).click();*/
-			robot.keyPress(KeyEvent.VK_TAB);
-			Utils.sleep(1);
-			robot.keyRelease(KeyEvent.VK_TAB);
+			driver.findElement(By.xpath("//input[@class='templateSearch input']")).sendKeys("Notification Letter Without Credit Monitoring");
 			Utils.sleep(2);
 			robot.keyPress(KeyEvent.VK_TAB);
 			Utils.sleep(1);
 			robot.keyRelease(KeyEvent.VK_TAB);
-			Utils.sleep(2);
+			Utils.sleep(1);
 			robot.keyPress(KeyEvent.VK_TAB);
 			Utils.sleep(1);
 			robot.keyRelease(KeyEvent.VK_TAB);
-			Utils.sleep(2);
+			/*Utils.sleep(1);
 			robot.keyPress(KeyEvent.VK_TAB);
 			Utils.sleep(1);
 			robot.keyRelease(KeyEvent.VK_TAB);
-			Utils.sleep(2);
+			Utils.sleep(1);
 			robot.keyPress(KeyEvent.VK_TAB);
 			Utils.sleep(1);
 			robot.keyRelease(KeyEvent.VK_TAB);
-			Utils.sleep(2);
+			Utils.sleep(1);
 			robot.keyPress(KeyEvent.VK_TAB);
 			Utils.sleep(1);
 			robot.keyRelease(KeyEvent.VK_TAB);
-			Utils.sleep(2);
+			Utils.sleep(1);
 			robot.keyPress(KeyEvent.VK_TAB);
 			Utils.sleep(1);
 			robot.keyRelease(KeyEvent.VK_TAB);
-			Utils.sleep(2);
+			Utils.sleep(1);
 			robot.keyPress(KeyEvent.VK_TAB);
 			Utils.sleep(1);
 			robot.keyRelease(KeyEvent.VK_TAB);
-			Utils.sleep(2);
+			Utils.sleep(1);
+			robot.keyPress(KeyEvent.VK_TAB);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_TAB);
+			Utils.sleep(1);*/
 			robot.keyPress(KeyEvent.VK_ENTER);
 			Utils.sleep(1);
 			robot.keyRelease(KeyEvent.VK_ENTER);
-			Utils.sleep(3);
-			WebElement subjectInput = getElementByLableText(driver, "Subject");
+			Utils.sleep(1);
+			robot.keyPress(KeyEvent.VK_ENTER);
+			Utils.sleep(1);
+			robot.keyRelease(KeyEvent.VK_ENTER);
+			Utils.sleep(4);
+			/*WebElement subjectInput = getElementByLableText(driver, "Subject");
 			subjectInput.clear();
-			subjectInput.sendKeys(Constants.email_subject);
-
-			Utils.scrollWindow(driver, 200);
+			subjectInput.sendKeys(Constants.email_subject);*/
+			Utils.scrollWindow(driver, -300);
+			driver.findElement(By.xpath("//input[@maxlength='3000']")).click();
+			driver.findElement(By.xpath("//input[@maxlength='3000']")).clear();
+			Utils.sleep(1);
+			driver.findElement(By.xpath("//input[@maxlength='3000']")).sendKeys(Constants.email_subject);
+			Utils.sleep(1);
+			Utils.scrollWindow(driver, 400);
 		}
 
 		// click send button
@@ -330,28 +344,25 @@ public class ServiceItemActionHelper {
 		Actions action = new Actions(driver);
 		Utils.scrollWindow(driver, 50);
 		WebElement el = driver.findElement(By.cssSelector("button[title='Edit Type']"));
-		action.moveToElement(el).click().build().perform();
-		Utils.sleep(2);
+		action.moveToElement(el).doubleClick().build().perform();
+		Utils.sleep(4);
+		//try {
 		try {
 			driver.findElement(By.linkText("--None--")).click();
-
-			Utils.sleep(2);
-
+			Utils.sleep(3);
+		} catch (Exception e) {
+			
+		}
 			driver.findElement(By.linkText(type)).click();
-
 			Utils.sleep(2);
-
 			// Save
 			saveButton.click();
-
 			Utils.sleep(4);
-
 			driver.navigate().refresh();
-
 			Utils.sleep(2);
-		} catch (Exception e) {
-			driver.switchTo().alert().accept();
-		}
+		//} catch (Exception e) {
+			//driver.switchTo().alert().accept();
+		//}
 	}
 
 	protected String getSuccessMessage(WebElement successPopup) {

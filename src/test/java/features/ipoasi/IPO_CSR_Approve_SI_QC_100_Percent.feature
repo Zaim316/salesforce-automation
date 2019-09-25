@@ -30,7 +30,7 @@ Feature: Existing user record refresh and create a new service item with new res
   
   @DirectApp
   Scenario: Creating a new response and validating its status
-   Then For Ipo approval process of response scenario Create a new response for new Service Item and Verify newly created service response status
+   Then For Ipo approval process of a response scenario Create a new response with attachment for new Service Item and Verify newly created service response status and attachment
   
   @DirectApp
   Scenario: Logging out from IPO CSR and logging in with IPO Super User

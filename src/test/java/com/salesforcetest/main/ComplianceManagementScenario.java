@@ -6,6 +6,7 @@ import org.testng.Assert;
 import com.relevantcodes.extentreports.ExtentTest;
 import com.relevantcodes.extentreports.LogStatus;
 import com.salesforcetest.pages.salesforce.ServiceItemsAction;
+import com.salesforcetest.pages.salesforce.uatg.GetScreenShot;
 import com.salesforcetest.shared.Compliance;
 import com.salesforcetest.shared.Constants;
 import com.salesforcetest.shared.Reporter;
@@ -13,7 +14,7 @@ import com.salesforcetest.shared.Reporter;
 public class ComplianceManagementScenario extends CommonServiceItemTestScenario{
 
 	private WebDriver driver;
-
+	public static String screenShotPath;
 	private String serviceItemNumber;
 
 	private ExtentTest testReporter;
@@ -34,6 +35,7 @@ public class ComplianceManagementScenario extends CommonServiceItemTestScenario{
 		try {
 			
 			String subject = ((Compliance) reporter.getType()).getSubject();
+			System.out.println(subject);
 			String msg = ((Compliance) reporter.getType()).getMessage();
 			String attachment = ((Compliance) reporter.getType()).getAttachment();
 			
@@ -43,6 +45,8 @@ public class ComplianceManagementScenario extends CommonServiceItemTestScenario{
 			testReporter.log(LogStatus.PASS, "send_report_email_from_gmail");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "send_report_email_from_gmail");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			Assert.assertEquals(e.getLocalizedMessage(), "Passed");
 			e.printStackTrace();
 		}
@@ -57,10 +61,11 @@ public class ComplianceManagementScenario extends CommonServiceItemTestScenario{
 			testReporter.log(LogStatus.PASS, "send_report_email_from_gmail");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "send_report_email_from_gmail");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			Assert.assertEquals(e.getLocalizedMessage(), "Passed");
 			e.printStackTrace();
 		}
-
 	}
 
 	public void select_and_assert_compliance_queue() throws Exception {
@@ -70,13 +75,14 @@ public class ComplianceManagementScenario extends CommonServiceItemTestScenario{
 			serviceAction.select_compliance_queue_list();
 
 			serviceItemNumber = serviceAction.assert_compliance_name_get_service_item_number();
-			if (serviceItemNumber == null || serviceItemNumber.isEmpty())
+			if (serviceItemNumber == null || serviceItemNumber.isEmpty()) {
 				throw new Exception("Service Item Number not generated");
-
+			}
 			testReporter.log(LogStatus.PASS, "select_and_assert_compliance_queue");
 		} catch (Exception e) {
-//			Utils.log("Error", "Automated Test for asserting compliance creation. - Failed");
 			testReporter.log(LogStatus.FAIL, "select_and_assert_compliance_queue");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			Assert.assertEquals(e.getLocalizedMessage(), "Passed");
 			e.printStackTrace();
 		}
@@ -96,8 +102,9 @@ public class ComplianceManagementScenario extends CommonServiceItemTestScenario{
 
 			testReporter.log(LogStatus.PASS, "select_compliance_and_change_ownership");
 		} catch (Exception e) {
-//			Utils.log("Error", "Automated test for opening a compliance ticket. - Failed");
 			testReporter.log(LogStatus.FAIL, "select_compliance_and_change_ownership");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			Assert.assertEquals(e.getLocalizedMessage(), "Passed");
 			e.printStackTrace();
 		}
@@ -112,13 +119,15 @@ public class ComplianceManagementScenario extends CommonServiceItemTestScenario{
 			testReporter.log(LogStatus.PASS, "update_service_item_type");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "update_service_item_type");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			Assert.assertEquals(e.getLocalizedMessage(), "Passed");
 			e.printStackTrace();
 		}
 	}
 
 	public void verify_status_change() throws Exception {
-		//try {
+		try {
 			if (serviceItemNumber == null || serviceItemNumber.isEmpty())
 				throw new Exception("Service Item Number not generated");
 
@@ -129,11 +138,13 @@ public class ComplianceManagementScenario extends CommonServiceItemTestScenario{
 			serviceAction.verify_compliance_service_item_status_change(serviceItemNumber);
 			
 			testReporter.log(LogStatus.PASS, "verify_status_change_for_compliance");
-		/*} catch (Exception e) {
+		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "verify_status_change_for_compliance");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			Assert.assertEquals(e.getLocalizedMessage(), "Passed");
 			e.printStackTrace();
-		}*/
+		}
 	}
 
 	/**
@@ -143,7 +154,9 @@ public class ComplianceManagementScenario extends CommonServiceItemTestScenario{
 	 * @throws Exception 
 	 */
 	public void select_service_item_and_send_email(String toEmail, String attachment, String msg) throws Exception {
+		//serviceItemNumber = "00017076";
 		try {
+		Constants.compliance_subject = Constants.compliance_subject+"_Duplicate";
 			Constants.email_subject = Constants.compliance_subject;
 			if(!"".equals(msg)) {
 				select_service_item_and_send_email(serviceItemNumber, driver, testReporter,toEmail,attachment,msg);
@@ -155,6 +168,8 @@ public class ComplianceManagementScenario extends CommonServiceItemTestScenario{
 			}
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "select_service_item_and_send_email_and_verify_attachment");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			Assert.assertEquals(e.getLocalizedMessage(), "Passed");
 			e.printStackTrace();
 		}
@@ -173,6 +188,8 @@ public class ComplianceManagementScenario extends CommonServiceItemTestScenario{
 
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "send_email_to_dhs");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			Assert.assertEquals(e.getLocalizedMessage(), "Passed");
 			e.printStackTrace();
 		}
@@ -189,9 +206,13 @@ public class ComplianceManagementScenario extends CommonServiceItemTestScenario{
 			testReporter.log(LogStatus.PASS, "submit_service_item_for_approval");
 		} catch (Exception e) {
 			testReporter.log(LogStatus.FAIL, "submit_service_item_for_approval");
+			screenShotPath = GetScreenShot.capture(driver);
+			testReporter.log(LogStatus.INFO, "Snapshot : " +testReporter.addScreenCapture(screenShotPath));
 			Assert.assertEquals(e.getLocalizedMessage(), "Passed");
 			e.printStackTrace();
 		}
 	}
-
+	public static void main(String args[]) {
+		
+	}
 }

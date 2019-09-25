@@ -56,7 +56,7 @@ public class Constants {
 	
 	public static final String compliance_msg = "This is an compliance report";
 
-	public static final String compliance_subject = "New Compliance Test " + System.currentTimeMillis();
+	public static String compliance_subject = "New Compliance Test " + System.currentTimeMillis();
 	
 	public static final String dhs_email = "acumenuscistest+dhs@gmail.com";
 	
@@ -70,12 +70,12 @@ public class Constants {
 
 	//Salesforce UATG credentials
 	
-	public static final String salesforce_url_uatg = "https://uscis--uatg.my.salesforce.com";
-	//public static final String salesforce_url_uatg = "https://uscis--uatg1.my.salesforce.com";
+	//public static final String salesforce_url_uatg = "https://uscis--uatg.my.salesforce.com";
+	public static final String salesforce_url_uatg = "https://uscis--uatg.my.salesforce.com/?login";
 	
 	public static final String salesforce_username_uatg = "zabid_cis@acumensolutions.com.uatg";
 	
-	//public static final String salesforce_username_uatg = "mohammad.z.abid@uscis.dhs.gov.uatg1";
+	//public static final String salesforce_username_uatg = "mohammad.z.abid@uscis.dhs.gov.uatg";
 
 	public static final String salesforce_password_uatg = "acumentest2";
 	
@@ -131,7 +131,7 @@ public class Constants {
 	
 	//UAT
 	public static final String salesforce_pstaff2_username_Admin = "zabid_cis2@acumensolutions.com.uat2";	
-	public static final String salesforce_pstaff2_password_Admin = "acumentest2";
+	public static final String salesforce_pstaff2_password_Admin = "acumentest1";
 	//public static final String salesforce_pstaff2_username_Admin = "zabid_cis2@acumensolutions.com.stars2qa";	
 	//public static final String salesforce_pstaff2_password_Admin = "acumentest2";
 	
