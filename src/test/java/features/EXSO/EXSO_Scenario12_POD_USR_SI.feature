@@ -25,3 +25,6 @@ Feature: Create a new Service Item with POD user and Validate all the expected f
   Scenario: Ending the script and close the browser
    Then EXSO Stop Report Generation for current scenario EXSO Assignment Scenario12 End to End Scenario1
    Then EXSO Scenario12 Close the browser Email auto approval process
+   
+   
+   

@@ -1346,7 +1346,8 @@ public class HD_ISO_VSC_New_Service_Response_Rejection_Flow {
 		driver.findElement(ele).clear();
 		driver.findElement(ele).sendKeys(percentageValue);
 		Utils.sleep(1);
-		driver.findElement(By.xpath(".//div[contains(@class,'pbBottomButtons')]/descendant::input[@value='Set QC Percentage']")).click();
+		//driver.findElement(By.xpath(".//div[contains(@class,'pbBottomButtons')]/descendant::input[@value='Set QC Percentage']")).click();
+		driver.findElements(By.xpath(".//input[@value='Set QC Percentage']")).get(0).click();
 		Utils.sleep(2);
 		ele = By.xpath(".//*[contains(text(),'Successfully updated QC Percentage for ISOs')]");
 		fluentWaitForElementVisibility();
@@ -1864,7 +1865,8 @@ public class HD_ISO_VSC_New_Service_Response_Rejection_Flow {
 		driver.findElement(ele).clear();
 		driver.findElement(ele).sendKeys(percentageValue);
 		Utils.sleep(1);
-		driver.findElement(By.xpath(".//div[contains(@class,'pbBottomButtons')]/descendant::input[@value='Set QC Percentage']")).click();
+		//driver.findElement(By.xpath(".//div[contains(@class,'pbBottomButtons')]/descendant::input[@value='Set QC Percentage']")).click();
+		driver.findElements(By.xpath(".//input[@value='Set QC Percentage']")).get(0).click();
 		Utils.sleep(2);
 		ele = By.xpath(".//*[contains(text(),'Successfully updated QC Percentage for ISOs')]");
 		fluentWaitForElementVisibility();

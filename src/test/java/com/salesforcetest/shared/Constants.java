@@ -73,11 +73,11 @@ public class Constants {
 	//public static final String salesforce_url_uatg = "https://uscis--uatg.my.salesforce.com";
 	public static final String salesforce_url_uatg = "https://uscis--uatg.my.salesforce.com/?login";
 	
-	public static final String salesforce_username_uatg = "zabid_cis@acumensolutions.com.uatg";
+	//public static final String salesforce_username_uatg = "zabid_cis@acumensolutions.com.uatg";
 	
-	//public static final String salesforce_username_uatg = "mohammad.z.abid@uscis.dhs.gov.uatg";
+	public static final String salesforce_username_uatg = "mohammad.z.abid@uscis.dhs.gov.uatg";
 
-	public static final String salesforce_password_uatg = "acumentest2";
+	public static final String salesforce_password_uatg = "acumentest3";
 	
 	public static final String email_password = "Acumentest1";
 

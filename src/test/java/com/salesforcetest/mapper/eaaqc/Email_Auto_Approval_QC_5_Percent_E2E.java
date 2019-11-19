@@ -575,7 +575,8 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 		driver.findElement(ele).clear();
 		driver.findElement(ele).sendKeys(percentageValue);
 		Utils.sleep(1);
-		driver.findElement(By.xpath(".//div[contains(@class,'pbBottomButtons')]/descendant::input[@value='Set QC Percentage']")).click();
+		//driver.findElement(By.xpath(".//div[contains(@class,'pbBottomButtons')]/descendant::input[@value='Set QC Percentage']")).click();
+		driver.findElements(By.xpath(".//input[@value='Set QC Percentage']")).get(0).click();
 		Utils.sleep(2);
 		ele = By.xpath(".//*[contains(text(),'Successfully updated QC Percentage for ISOs')]");
 		fluentWaitForElementVisibility();
@@ -675,7 +676,8 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 		driver.get(url);
 		driver.findElement(By.id("sign_in_username")).sendKeys(username);
 		driver.findElement(By.id("sign_in_password")).sendKeys(passowrd);
-		driver.findElement(By.xpath("//input[@value='Log In']")).click();
+		Utils.sleep(1);
+		driver.findElement(By.xpath("//input[@value='Log in']")).click();
 		try {
 			WebDriverWait wait = new WebDriverWait (driver, 5);
 			ele = By.xpath("//div[text()='zabid@acumensolutions.com']");
@@ -740,14 +742,25 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 				scrollingFunction();
 				driver.findElement(By.xpath("//select[contains(@id,'listSelect')]/option[text()='HD Hotline Follow-up I-360']")).click();
 				Utils.sleep(2);
+				try {
 				driver.findElement(By.xpath("//div[@title='Subject']")).click();
-				Utils.sleep(1);
+				Utils.sleep(2);
 				element = driver.findElement(By.xpath(".//span[text()='"+subjectLine+"']"));
 				highlightElement();
 				element = driver.findElement(By.xpath(".//span[text()='"+subjectLine+"']/parent::a/parent::div/parent::td/preceding-sibling::td[2]/div/a"));
 				highlightElement();
 				newSINo = driver.findElement(By.xpath(".//span[text()='"+subjectLine+"']/parent::a/parent::div/parent::td/preceding-sibling::td[2]/div/a")).getText(); //// need to chang
-				Utils.sleep(4);
+				Utils.sleep(2);
+				} catch (Exception e) {
+					driver.findElement(By.xpath("//div[contains(@title,'Time Opened')]")).click();
+					Utils.sleep(2);
+					element = driver.findElement(By.xpath(".//span[text()='"+subjectLine+"']"));
+					highlightElement();
+					element = driver.findElement(By.xpath(".//span[text()='"+subjectLine+"']/parent::a/parent::div/parent::td/preceding-sibling::td[2]/div/a"));
+					highlightElement();
+					newSINo = driver.findElement(By.xpath(".//span[text()='"+subjectLine+"']/parent::a/parent::div/parent::td/preceding-sibling::td[2]/div/a")).getText(); //// need to chang
+					Utils.sleep(1);
+				}
 				driver.switchTo().defaultContent();
 	}
 	/*
@@ -800,11 +813,11 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 			Utils.sleep(2);
 			wait.until(ExpectedConditions.alertIsPresent());
 			driver.switchTo().alert().accept();
-			Utils.sleep(2);
+			Utils.sleep(1);
 			wait.until(ExpectedConditions.alertIsPresent());
-			Utils.sleep(2);
+			Utils.sleep(1);
 			driver.switchTo().alert().accept();
-			Utils.sleep(2);
+			Utils.sleep(1);
 		} catch (Exception e) {
 			System.out.println("No Service Item number is present for duplication process.");
 		}
@@ -1447,8 +1460,9 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 				Utils.sleep(2);
 				driver.findElement(By.xpath("//select[contains(@id,'listSelect')]/option[text()='"+dropDownSelect+"']")).click();
 				Utils.sleep(2);
-				driver.findElement(By.xpath("//div[@title='Subject']")).click();
-				Utils.sleep(1);
+				try {
+					driver.findElement(By.xpath("//div[contains(@title,'Time Opened')]")).click();
+					Utils.sleep(2);
 				element = driver.findElement(By.xpath(".//span[text()='"+subjectLine+"']"));
 				scrollingFunction();
 				highlightElement();
@@ -1456,6 +1470,16 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 				highlightElement();
 				newSINo = driver.findElement(By.xpath(".//span[text()='"+subjectLine+"']/parent::a/parent::div/parent::td/preceding-sibling::td[2]/div/a")).getText();
 				Utils.sleep(1);
+				} catch (Exception e) {
+					driver.findElement(By.xpath("//div[contains(@title,'Time Opened')]")).click();
+					Utils.sleep(2);
+					element = driver.findElement(By.xpath(".//span[text()='"+subjectLine+"']"));
+					highlightElement();
+					element = driver.findElement(By.xpath(".//span[text()='"+subjectLine+"']/parent::a/parent::div/parent::td/preceding-sibling::td[2]/div/a"));
+					highlightElement();
+					newSINo = driver.findElement(By.xpath(".//span[text()='"+subjectLine+"']/parent::a/parent::div/parent::td/preceding-sibling::td[2]/div/a")).getText(); //// need to chang
+					Utils.sleep(1);
+				}
 				driver.switchTo().defaultContent();
 	}
 	/*
@@ -1578,7 +1602,8 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 		driver.findElement(ele).clear();
 		driver.findElement(ele).sendKeys(percentageValue);
 		Utils.sleep(1);
-		driver.findElement(By.xpath(".//div[contains(@class,'pbBottomButtons')]/descendant::input[@value='Set QC Percentage']")).click();
+		//driver.findElement(By.xpath(".//div[contains(@class,'pbBottomButtons')]/descendant::input[@value='Set QC Percentage']")).click();
+		driver.findElements(By.xpath(".//input[@value='Set QC Percentage']")).get(0).click();
 		Utils.sleep(2);
 		ele = By.xpath(".//*[contains(text(),'Successfully updated QC Percentage for ISOs')]");
 		fluentWaitForElementVisibility();
@@ -2044,7 +2069,7 @@ public class Email_Auto_Approval_QC_5_Percent_E2E {
 		driver.get(url);
 		driver.findElement(By.id("sign_in_username")).sendKeys(username);
 		driver.findElement(By.id("sign_in_password")).sendKeys(passowrd);
-		driver.findElement(By.xpath("//input[@value='Log In']")).click();
+		driver.findElement(By.xpath("//input[@value='Log in']")).click();
 		try {
 			WebDriverWait wait = new WebDriverWait (driver, 5);
 			ele = By.xpath("//div[text()='zabid@acumensolutions.com']");
